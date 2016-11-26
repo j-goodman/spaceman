@@ -155,10 +155,9 @@
 	    y: 0,
 	  };
 	  this.tileSize = {
-	    x: 32,
-	    y: 16,
+	    x: 12,
+	    y: 6,
 	  };
-	  this.tileSize = 32;
 	  this.sprites = {};
 	  this.sprites.standingRight = new Sprite (sprites.standing);
 	  this.sprites.standingLeft = new Sprite (sprites.standing, 'xflip');
@@ -179,7 +178,7 @@
 	    coord = indeces[i];
 	    this.pos[coord] += this.speed[coord];
 	    this.gap[coord] += this.speed[coord];
-	    if (this.gap[coord] > this.tileSize[coord]) {
+	    if (Math.abs(this.gap[coord]) > this.tileSize[coord]) {
 	      this.speed[coord] = 0;
 	      this.gap[coord] = 0;
 	    }
@@ -227,6 +226,9 @@
 	
 	Sprite.prototype.draw = function (screen, pos, frame) {
 	  var x; var y; var imageX;
+	  if (frame > this.image.length-1 || frame < 0) {
+	    frame = 0;
+	  }
 	  for (y=0 ; y<this.height ; y++) {
 	    for (x=0 ; x<this.width ; x++) {
 	      imageX = this.xflip ? this.width - 1 - x : x;

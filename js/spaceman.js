@@ -18,10 +18,9 @@ var Spaceman = function () {
     y: 0,
   };
   this.tileSize = {
-    x: 32,
-    y: 16,
+    x: 12,
+    y: 6,
   };
-  this.tileSize = 32;
   this.sprites = {};
   this.sprites.standingRight = new Sprite (sprites.standing);
   this.sprites.standingLeft = new Sprite (sprites.standing, 'xflip');
@@ -42,7 +41,7 @@ Spaceman.prototype.act = function () {
     coord = indeces[i];
     this.pos[coord] += this.speed[coord];
     this.gap[coord] += this.speed[coord];
-    if (this.gap[coord] > this.tileSize[coord]) {
+    if (Math.abs(this.gap[coord]) > this.tileSize[coord]) {
       this.speed[coord] = 0;
       this.gap[coord] = 0;
     }

@@ -9,6 +9,9 @@ var Sprite = function (image, effect) {
 
 Sprite.prototype.draw = function (screen, pos, frame) {
   var x; var y; var imageX;
+  if (frame > this.image.length-1 || frame < 0) {
+    frame = 0;
+  }
   for (y=0 ; y<this.height ; y++) {
     for (x=0 ; x<this.width ; x++) {
       imageX = this.xflip ? this.width - 1 - x : x;
