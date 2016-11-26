@@ -1,6 +1,7 @@
 var Sprite = require('./sprite.js');
 var sprites = {
-  standing: require('../sprites/spaceman/standing.js'),
+  standingRight: require('../sprites/spaceman/standingRight.js'),
+  standingForward: require('../sprites/spaceman/standingForward.js'),
   walking: require('../sprites/spaceman/walking.js'),
 };
 
@@ -22,12 +23,14 @@ var Spaceman = function () {
     y: 6,
   };
   this.sprites = {};
-  this.sprites.standingRight = new Sprite (sprites.standing);
-  this.sprites.standingLeft = new Sprite (sprites.standing, 'xflip');
+  this.sprites.standingRight = new Sprite (sprites.standingRight);
+  this.sprites.standingLeft = new Sprite (sprites.standingRight, 'xflip');
+  this.sprites.standingForward = new Sprite (sprites.standingForward);
   this.sprites.walkingRight = new Sprite (sprites.walking);
   this.sprites.walkingLeft = new Sprite (sprites.walking, 'xflip');
-  this.sprite = this.sprites.standing;
+  this.sprite = this.sprites.standingForward;
   this.frame = 0;
+  this.facing = 'down';
   this.microFrame = 0;
 };
 
@@ -66,7 +69,17 @@ Spaceman.prototype.setSprite = function () {
     this.facing = 'left';
     this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
   } else {
-    this.sprite = this.facing === 'right' ? this.sprites.standingRight : this.sprites.standingLeft;
+    switch (this.facing) {
+      case 'right':
+        this.sprite = this.sprites.standingRight;
+        break;
+      case 'left':
+        this.sprite = this.sprites.standingLeft;
+        break;
+      case 'down':
+        this.sprite = this.sprites.standingForward;
+        break;
+    }
   }
   this.frame = Math.floor(this.microFrame/frameDelay);
 };

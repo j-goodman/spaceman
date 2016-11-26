@@ -65,6 +65,8 @@ var initializeWorld = function () {
       player.walk(1);
     } else if (event.keyCode == 37) {
       player.walk(-1);
+    } else if (event.keyCode == 40) {
+      player.facing = 'down';
     }
   };
 };
