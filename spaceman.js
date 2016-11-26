@@ -48,7 +48,7 @@
 	
 	// 1. REQUIRE DEPENDENCIES //
 	var Spaceman = __webpack_require__(1);
-	var objects = __webpack_require__(4);
+	var objects = __webpack_require__(5);
 	
 	// 2. INITIALIZE CANVAS //
 	var initializeCanvas = function () {
@@ -138,7 +138,7 @@
 	var Sprite = __webpack_require__(2);
 	var sprites = {
 	  standing: __webpack_require__(3),
-	  walking: __webpack_require__(5),
+	  walking: __webpack_require__(4),
 	};
 	
 	var Spaceman = function () {
@@ -159,10 +159,11 @@
 	    y: 16,
 	  };
 	  this.tileSize = 32;
-	  this.sprites = {
-	    standing: new Sprite (sprites.standing),
-	    walking: new Sprite (sprites.walking),
-	  };
+	  this.sprites = {};
+	  this.sprites.standingRight = new Sprite (sprites.standing);
+	  this.sprites.standingLeft = new Sprite (sprites.standing, 'xflip');
+	  this.sprites.walkingRight = new Sprite (sprites.walking);
+	  this.sprites.walkingLeft = new Sprite (sprites.walking, 'xflip');
 	  this.sprite = this.sprites.standing;
 	  this.frame = 0;
 	  this.microFrame = 0;
@@ -193,16 +194,19 @@
 	};
 	
 	Spaceman.prototype.setSprite = function () {
+	  var frameDelay = 4;
 	  if (this.speed.x > 0) {
-	    this.sprite = this.sprites.walking;
+	    this.sprite = this.sprites.walkingRight;
+	    this.facing = 'right';
 	    this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
 	  } else if (this.speed.x < 0) {
-	    this.sprite = this.sprites.walking;
+	    this.sprite = this.sprites.walkingLeft;
+	    this.facing = 'left';
 	    this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
 	  } else {
-	    this.sprite = this.sprites.standing;
+	    this.sprite = this.facing === 'right' ? this.sprites.standingRight : this.sprites.standingLeft;
 	  }
-	  this.frame = Math.floor(this.microFrame/4);
+	  this.frame = Math.floor(this.microFrame/frameDelay);
 	};
 	
 	module.exports = Spaceman;
@@ -212,20 +216,22 @@
 /* 2 */
 /***/ function(module, exports) {
 
-	var Sprite = function (image) {
+	var Sprite = function (image, effect) {
 	  this.image = image;
 	  this.height = this.image[0].length;
 	  this.width = this.image[0][0].length;
+	  if (effect === 'xflip') {
+	    this.xflip = true;
+	  }
 	};
 	
 	Sprite.prototype.draw = function (screen, pos, frame) {
-	  var x; var y;
+	  var x; var y; var imageX;
 	  for (y=0 ; y<this.height ; y++) {
 	    for (x=0 ; x<this.width ; x++) {
-	      if (screen.pixels[pos.y+y]) {
-	      }
-	      if (this.image[frame][y][x] && screen.pixels[pos.y+y] && screen.pixels[pos.y+y][pos.x+x]) {
-	        screen.pixels[pos.y+y][pos.x+x].hex = this.image[frame][y][x];
+	      imageX = this.xflip ? this.width - 1 - x : x;
+	      if (this.image[frame][y][imageX] && screen.pixels[pos.y+y] && screen.pixels[pos.y+y][pos.x+x]) {
+	        screen.pixels[pos.y+y][pos.x+x].hex = this.image[frame][y][imageX];
 	      }
 	    }
 	  }
@@ -270,33 +276,6 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
-
-	var Objects;
-	
-	Objects = {
-	  index: {},
-	  people: [],
-	  all: [],
-	  count: -1,
-	};
-	
-	Objects.push = function (obj, classes) {
-	  var oo;
-	  this.count++;
-	  this.index[this.count] = obj;
-	  obj.id = this.count;
-	  this.all.push(obj.id);
-	  for (oo=0 ; oo<classes.length ; oo++) {
-	    this[classes[oo]].push(obj.id);
-	  }
-	};
-	
-	module.exports = Objects;
-
-
-/***/ },
-/* 5 */
 /***/ function(module, exports) {
 
 	var s;
@@ -459,6 +438,33 @@
 	  ],
 	];
 	module.exports = s;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	var Objects;
+	
+	Objects = {
+	  index: {},
+	  people: [],
+	  all: [],
+	  count: -1,
+	};
+	
+	Objects.push = function (obj, classes) {
+	  var oo;
+	  this.count++;
+	  this.index[this.count] = obj;
+	  obj.id = this.count;
+	  this.all.push(obj.id);
+	  for (oo=0 ; oo<classes.length ; oo++) {
+	    this[classes[oo]].push(obj.id);
+	  }
+	};
+	
+	module.exports = Objects;
 
 
 /***/ }

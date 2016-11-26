@@ -22,11 +22,11 @@ var Spaceman = function () {
     y: 16,
   };
   this.tileSize = 32;
-  this.sprites = {
-    standing: new Sprite (sprites.standing),
-    walking_right: new Sprite (sprites.walking),
-    walking_left: new Sprite (sprites.walking, 'xflip'),
-  };
+  this.sprites = {};
+  this.sprites.standingRight = new Sprite (sprites.standing);
+  this.sprites.standingLeft = new Sprite (sprites.standing, 'xflip');
+  this.sprites.walkingRight = new Sprite (sprites.walking);
+  this.sprites.walkingLeft = new Sprite (sprites.walking, 'xflip');
   this.sprite = this.sprites.standing;
   this.frame = 0;
   this.microFrame = 0;
@@ -57,16 +57,19 @@ Spaceman.prototype.walk = function (direction) {
 };
 
 Spaceman.prototype.setSprite = function () {
+  var frameDelay = 4;
   if (this.speed.x > 0) {
-    this.sprite = this.sprites.walking_right;
+    this.sprite = this.sprites.walkingRight;
+    this.facing = 'right';
     this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
   } else if (this.speed.x < 0) {
-    this.sprite = this.sprites.walking_left;
+    this.sprite = this.sprites.walkingLeft;
+    this.facing = 'left';
     this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
   } else {
-    this.sprite = this.sprites.standing;
+    this.sprite = this.facing === 'right' ? this.sprites.standingRight : this.sprites.standingLeft;
   }
-  this.frame = Math.floor(this.microFrame/4);
+  this.frame = Math.floor(this.microFrame/frameDelay);
 };
 
 module.exports = Spaceman;
