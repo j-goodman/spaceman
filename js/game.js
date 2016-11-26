@@ -60,6 +60,13 @@ var renderPixels = function () {
 var initializeWorld = function () {
   var player = new Spaceman ();
   objects.push(player, ['people']);
+  window.onkeydown = function (event) {
+    if (event.keyCode === 39) {
+      player.walk(1);
+    } else if (event.keyCode == 37) {
+      player.walk(-1);
+    }
+  };
 };
 
 // 7. START GAME //
@@ -70,8 +77,8 @@ window.onload = function () {
   window.setInterval(function () {
     for (i=0 ; i<objects.all.length ; i++) {
       obj = objects.index[objects.all[i]];
-      if (obj.draw) { obj.draw(screen); }
       if (obj.act) { obj.act(); }
+      if (obj.draw) { obj.draw(screen); }
     }
     renderPixels();
   }, 32);
