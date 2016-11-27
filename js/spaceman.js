@@ -98,6 +98,19 @@ Spaceman.prototype.setSprite = function () {
         break;
       case 'down':
         this.sprite = this.sprites.standingForward;
+        var iris; var white;
+        if (!Math.floor(Math.random()*120)) {
+          iris = this.sprite.image[0][6][3];
+          white = this.sprite.image[0][6][4];
+          this.sprite.image[0][6][3] = white;
+          this.sprite.image[0][7][3] = white;
+          this.sprite.image[0][6][4] = iris;
+          this.sprite.image[0][7][4] = iris;
+          this.sprite.image[0][6][6] = white;
+          this.sprite.image[0][7][6] = white;
+          this.sprite.image[0][6][7] = iris;
+          this.sprite.image[0][7][7] = iris;
+        }
         break;
       case 'up':
         this.sprite = this.sprites.standingBackward;

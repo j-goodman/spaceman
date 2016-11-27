@@ -48,7 +48,7 @@
 	
 	// 1. REQUIRE DEPENDENCIES //
 	var Spaceman = __webpack_require__(1);
-	var objects = __webpack_require__(6);
+	var objects = __webpack_require__(9);
 	
 	// 2. INITIALIZE CANVAS //
 	var initializeCanvas = function () {
@@ -143,10 +143,10 @@
 	var sprites = {
 	  standingRight: __webpack_require__(3),
 	  standingForward: __webpack_require__(4),
-	  standingBackward: __webpack_require__(7),
-	  walkingRight: __webpack_require__(8),
-	  walkingDown: __webpack_require__(9),
-	  walkingUp: __webpack_require__(10),
+	  standingBackward: __webpack_require__(5),
+	  walkingRight: __webpack_require__(6),
+	  walkingDown: __webpack_require__(7),
+	  walkingUp: __webpack_require__(8),
 	};
 	
 	var Spaceman = function () {
@@ -239,6 +239,19 @@
 	        break;
 	      case 'down':
 	        this.sprite = this.sprites.standingForward;
+	        var iris; var white;
+	        if (!Math.floor(Math.random()*120)) {
+	          iris = this.sprite.image[0][6][3];
+	          white = this.sprite.image[0][6][4];
+	          this.sprite.image[0][6][3] = white;
+	          this.sprite.image[0][7][3] = white;
+	          this.sprite.image[0][6][4] = iris;
+	          this.sprite.image[0][7][4] = iris;
+	          this.sprite.image[0][6][6] = white;
+	          this.sprite.image[0][7][6] = white;
+	          this.sprite.image[0][6][7] = iris;
+	          this.sprite.image[0][7][7] = iris;
+	        }
 	        break;
 	      case 'up':
 	        this.sprite = this.sprites.standingBackward;
@@ -355,35 +368,7 @@
 
 
 /***/ },
-/* 5 */,
-/* 6 */
-/***/ function(module, exports) {
-
-	var Objects;
-	
-	Objects = {
-	  index: {},
-	  people: [],
-	  all: [],
-	  count: -1,
-	};
-	
-	Objects.push = function (obj, classes) {
-	  var oo;
-	  this.count++;
-	  this.index[this.count] = obj;
-	  obj.id = this.count;
-	  this.all.push(obj.id);
-	  for (oo=0 ; oo<classes.length ; oo++) {
-	    this[classes[oo]].push(obj.id);
-	  }
-	};
-	
-	module.exports = Objects;
-
-
-/***/ },
-/* 7 */
+/* 5 */
 /***/ function(module, exports) {
 
 	var s;
@@ -419,7 +404,7 @@
 
 
 /***/ },
-/* 8 */
+/* 6 */
 /***/ function(module, exports) {
 
 	var s;
@@ -585,7 +570,7 @@
 
 
 /***/ },
-/* 9 */
+/* 7 */
 /***/ function(module, exports) {
 
 	var s;
@@ -803,7 +788,7 @@
 
 
 /***/ },
-/* 10 */
+/* 8 */
 /***/ function(module, exports) {
 
 	var s;
@@ -1018,6 +1003,33 @@
 	  ],
 	];
 	module.exports = s;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	var Objects;
+	
+	Objects = {
+	  index: {},
+	  people: [],
+	  all: [],
+	  count: -1,
+	};
+	
+	Objects.push = function (obj, classes) {
+	  var oo;
+	  this.count++;
+	  this.index[this.count] = obj;
+	  obj.id = this.count;
+	  this.all.push(obj.id);
+	  for (oo=0 ; oo<classes.length ; oo++) {
+	    this[classes[oo]].push(obj.id);
+	  }
+	};
+	
+	module.exports = Objects;
 
 
 /***/ }
