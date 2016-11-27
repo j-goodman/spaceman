@@ -63,12 +63,27 @@ var initializeWorld = function () {
   window.onkeydown = function (event) {
     if (event.keyCode === 39) {
       player.walkLateral(1);
+      player.rightKeyDown = true;
     } else if (event.keyCode == 37) {
       player.walkLateral(-1);
+      player.leftKeyDown = true;
     } else if (event.keyCode == 40) {
       player.walkVertical(1);
+      player.downKeyDown = true;
     } else if (event.keyCode == 38) {
       player.walkVertical(-1);
+      player.upKeyDown = true;
+    }
+  };
+  window.onkeyup = function (event) {
+    if (event.keyCode === 39) {
+      player.rightKeyDown = false;
+    } else if (event.keyCode == 37) {
+      player.leftKeyDown = false;
+    } else if (event.keyCode == 40) {
+      player.downKeyDown = false;
+    } else if (event.keyCode == 38) {
+      player.upKeyDown = false;
     }
   };
 };

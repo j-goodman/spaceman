@@ -45,17 +45,27 @@ Spaceman.prototype.draw = function (screen) {
 };
 
 Spaceman.prototype.act = function () {
+  this.stopCheck();
+  this.setSprite();
+};
+
+Spaceman.prototype.stopCheck = function () {
   var indeces = ['x', 'y']; var i; var coord;
   for (i = 0 ; i<2 ; i++) {
     coord = indeces[i];
     this.pos[coord] += this.speed[coord];
     this.gap[coord] += this.speed[coord];
     if (Math.abs(this.gap[coord]) > this.tileSize[coord]) {
+      if (
+          (this.speed.x > 0 && !this.rightKeyDown)||
+          (this.speed.x < 0 && !this.leftKeyDown) ||
+          (this.speed.y > 0 && !this.downKeyDown) ||
+          (this.speed.y < 0 && !this.upKeyDown)
+         )
       this.speed[coord] = 0;
       this.gap[coord] = 0;
     }
   }
-  this.setSprite();
 };
 
 Spaceman.prototype.walkLateral = function (direction) {
