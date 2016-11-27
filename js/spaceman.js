@@ -2,7 +2,10 @@ var Sprite = require('./sprite.js');
 var sprites = {
   standingRight: require('../sprites/spaceman/standingRight.js'),
   standingForward: require('../sprites/spaceman/standingForward.js'),
-  walking: require('../sprites/spaceman/walking.js'),
+  standingBackward: require('../sprites/spaceman/standingBackward.js'),
+  walkingRight: require('../sprites/spaceman/walkingRight.js'),
+  walkingDown: require('../sprites/spaceman/walkingDown.js'),
+  walkingUp: require('../sprites/spaceman/walkingUp.js'),
 };
 
 var Spaceman = function () {
@@ -26,8 +29,11 @@ var Spaceman = function () {
   this.sprites.standingRight = new Sprite (sprites.standingRight);
   this.sprites.standingLeft = new Sprite (sprites.standingRight, 'xflip');
   this.sprites.standingForward = new Sprite (sprites.standingForward);
-  this.sprites.walkingRight = new Sprite (sprites.walking);
-  this.sprites.walkingLeft = new Sprite (sprites.walking, 'xflip');
+  this.sprites.standingBackward = new Sprite (sprites.standingBackward);
+  this.sprites.walkingRight = new Sprite (sprites.walkingRight);
+  this.sprites.walkingLeft = new Sprite (sprites.walkingRight, 'xflip');
+  this.sprites.walkingDown = new Sprite (sprites.walkingDown);
+  this.sprites.walkingUp = new Sprite (sprites.walkingUp);
   this.sprite = this.sprites.standingForward;
   this.frame = 0;
   this.facing = 'down';
@@ -52,9 +58,15 @@ Spaceman.prototype.act = function () {
   this.setSprite();
 };
 
-Spaceman.prototype.walk = function (direction) {
+Spaceman.prototype.walkLateral = function (direction) {
   this.speed.x = 1*direction;
   this.gap.x = 0;
+  this.frame = 0;
+};
+
+Spaceman.prototype.walkVertical = function (direction) {
+  this.speed.y = 1*direction;
+  this.gap.y = 0;
   this.frame = 0;
 };
 
@@ -68,6 +80,14 @@ Spaceman.prototype.setSprite = function () {
     this.sprite = this.sprites.walkingLeft;
     this.facing = 'left';
     this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
+  } else if (this.speed.y < 0) {
+    this.sprite = this.sprites.walkingUp;
+    this.facing = 'up';
+    this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
+  } else if (this.speed.y > 0) {
+    this.sprite = this.sprites.walkingDown;
+    this.facing = 'down';
+    this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
   } else {
     switch (this.facing) {
       case 'right':
@@ -78,6 +98,9 @@ Spaceman.prototype.setSprite = function () {
         break;
       case 'down':
         this.sprite = this.sprites.standingForward;
+        break;
+      case 'up':
+        this.sprite = this.sprites.standingBackward;
         break;
     }
   }

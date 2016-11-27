@@ -25,8 +25,8 @@ var Pixel = function (x,y) {
 
 // 4. POPULATE PIXELGRAPH //
 var screen = {
-  x: 120,
-  y: 80,
+  x: 180,
+  y: 120,
   pixels: [],
 };
 
@@ -50,7 +50,7 @@ var renderPixels = function () {
     for (x=0 ; x<screen.pixels[0].length ; x++) {
       pixel = screen.pixels[y][x];
       ctx.fillStyle = pixel.hex;
-      ctx.fillRect(pixel.x*6, pixel.y*6, 6, 6);
+      ctx.fillRect(pixel.x*4, pixel.y*4, 4, 4);
       pixel.hex = '#000';
     }
   }
@@ -62,11 +62,13 @@ var initializeWorld = function () {
   objects.push(player, ['people']);
   window.onkeydown = function (event) {
     if (event.keyCode === 39) {
-      player.walk(1);
+      player.walkLateral(1);
     } else if (event.keyCode == 37) {
-      player.walk(-1);
+      player.walkLateral(-1);
     } else if (event.keyCode == 40) {
-      player.facing = 'down';
+      player.walkVertical(1);
+    } else if (event.keyCode == 38) {
+      player.walkVertical(-1);
     }
   };
 };
