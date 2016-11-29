@@ -1053,7 +1053,7 @@
 	};
 	
 	Ground.prototype.draw = function (screen) {
-	  this.drawing(screen, this.pos, this.color);
+	  this.drawing(screen, this.pos, this.color, this);
 	};
 	
 	Ground.prototype.act = function () {
@@ -1068,16 +1068,19 @@
 
 	var colors = __webpack_require__(11);
 	
-	var ground = function (screen, origin, color) {
+	var ground = function (screen, origin, color, obj) {
 	  var x; var y;
 	  var width = 12;
 	  var height = 6;
-	  var secondColor = colors.addHue(color, 'blue', 32);
+	  if (!obj.secondColor) {
+	    obj.secondColor = colors.addHue(color, 'blue', 14);
+	  }
 	  for (x=0 ; x<width ; x++) {
 	    for (y=0 ; y<height ; y++) {
-	      screen.pixels[origin.y+y][origin.x+x].hex = color;
-	      if (!y % 12 && !x % 24) {
-	        screen.pixels[origin.y+y][origin.x+x].hex = secondColor;
+	      if (y % 12 || x-6 % 24) {
+	        screen.pixels[origin.y+y][origin.x+x].hex = color;
+	      } else {
+	        screen.pixels[origin.y+y][origin.x+x].hex = obj.secondColor;
 	      }
 	    }
 	  }
@@ -1107,12 +1110,14 @@
 	      };
 	    }
 	    dex[color] += amount;
+	    if (dex[color] > 255) { dex[color] = 255; }
+	    if (dex[color] < 0) { dex[color] = 0; }
 	    hex = '#';
 	    var hues = ['red', 'green', 'blue'];
 	    for (i=0 ; i<3 ; i++) {
 	      hue = hues[i];
 	      dex[hue] = dex[hue].toString(16);
-	      if (hue.length < 2) { hue = 0+hue; }
+	      if (dex[hue].length < 2) { dex[hue] = dex[hue]+'0'; }
 	      hex += dex[hue];
 	    }
 	    if (hex[1]=='0' && hex[3]=='0' && hex[5]=='0') {

@@ -15,12 +15,14 @@ var colors = {
       };
     }
     dex[color] += amount;
+    if (dex[color] > 255) { dex[color] = 255; }
+    if (dex[color] < 0) { dex[color] = 0; }
     hex = '#';
     var hues = ['red', 'green', 'blue'];
     for (i=0 ; i<3 ; i++) {
       hue = hues[i];
       dex[hue] = dex[hue].toString(16);
-      if (hue.length < 2) { hue = 0+hue; }
+      if (dex[hue].length < 2) { dex[hue] = dex[hue]+'0'; }
       hex += dex[hue];
     }
     if (hex[1]=='0' && hex[3]=='0' && hex[5]=='0') {

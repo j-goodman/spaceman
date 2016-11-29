@@ -10,7 +10,7 @@ var Ground = function (x, y) {
 };
 
 Ground.prototype.draw = function (screen) {
-  this.drawing(screen, this.pos, this.color);
+  this.drawing(screen, this.pos, this.color, this);
 };
 
 Ground.prototype.act = function () {
