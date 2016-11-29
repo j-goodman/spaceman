@@ -48,7 +48,8 @@
 	
 	// 1. REQUIRE DEPENDENCIES //
 	var Spaceman = __webpack_require__(1);
-	var objects = __webpack_require__(9);
+	var Ground = __webpack_require__(9);
+	var objects = __webpack_require__(12);
 	
 	// 2. INITIALIZE CANVAS //
 	var initializeCanvas = function () {
@@ -104,6 +105,12 @@
 	
 	// 6. INITIALIZE WORLD //
 	var initializeWorld = function () {
+	  var x;
+	  for (y=0 ; y<14 ; y++) {
+	    for (x=0 ; x<15 ; x++) {
+	      objects.push(new Ground (x*12, 36+y*6), ['terrain']);
+	    }
+	  }
 	  var player = new Spaceman ();
 	  objects.push(player, ['people']);
 	  window.onkeydown = function (event) {
@@ -146,7 +153,7 @@
 	      if (obj.draw) { obj.draw(screen); }
 	    }
 	    renderPixels();
-	  }, 32);
+	  }, 48);
 	};
 
 
@@ -166,8 +173,8 @@
 	
 	var Spaceman = function () {
 	  this.pos = {
-	    x: 0,
-	    y: 32,
+	    x: 12,
+	    y: 24,
 	  };
 	  this.speed = {
 	    x: 0,
@@ -213,11 +220,11 @@
 	    this.gap[coord] += this.speed[coord];
 	    if (Math.abs(this.gap[coord]) > this.tileSize[coord]) {
 	      if (
-	          (this.speed.x > 0 && !this.rightKeyDown)||
-	          (this.speed.x < 0 && !this.leftKeyDown) ||
-	          (this.speed.y > 0 && !this.downKeyDown) ||
-	          (this.speed.y < 0 && !this.upKeyDown)
-	         )
+	        (this.speed.x > 0 && !this.rightKeyDown) ||
+	        (this.speed.x < 0 && !this.leftKeyDown)  ||
+	        (this.speed.y > 0 && !this.downKeyDown)  ||
+	        (this.speed.y < 0 && !this.upKeyDown)
+	      )
 	      this.speed[coord] = 0;
 	      this.gap[coord] = 0;
 	    }
@@ -1032,6 +1039,94 @@
 
 /***/ },
 /* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var groundDrawing = __webpack_require__(10);
+	
+	var Ground = function (x, y) {
+	  this.pos = {
+	    x: x,
+	    y: y,
+	  };
+	  this.color = '#da3';
+	  this.drawing = groundDrawing;
+	};
+	
+	Ground.prototype.draw = function (screen) {
+	  this.drawing(screen, this.pos, this.color);
+	};
+	
+	Ground.prototype.act = function () {
+	};
+	
+	module.exports = Ground;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var colors = __webpack_require__(11);
+	
+	var ground = function (screen, origin, color) {
+	  var x; var y;
+	  var width = 12;
+	  var height = 6;
+	  var secondColor = colors.addHue(color, 'blue', 32);
+	  for (x=0 ; x<width ; x++) {
+	    for (y=0 ; y<height ; y++) {
+	      screen.pixels[origin.y+y][origin.x+x].hex = color;
+	      if (!y % 12 && !x % 24) {
+	        screen.pixels[origin.y+y][origin.x+x].hex = secondColor;
+	      }
+	    }
+	  }
+	};
+	
+	module.exports = ground;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	var colors = {
+	  addHue: function (hex, color, amount) {
+	    var i; var dex;
+	    if (hex.length === 7) {
+	      dex = {
+	        red: parseInt(hex.slice(1,3), 16),
+	        green: parseInt(hex.slice(3,5), 16),
+	        blue: parseInt(hex.slice(5,7), 16),
+	      };
+	    } else if (hex.length === 4) {
+	      dex = {
+	        red: parseInt(hex.slice(1,2), 16),
+	        green: parseInt(hex.slice(2,3), 16),
+	        blue: parseInt(hex.slice(3,4), 16),
+	      };
+	    }
+	    dex[color] += amount;
+	    hex = '#';
+	    var hues = ['red', 'green', 'blue'];
+	    for (i=0 ; i<3 ; i++) {
+	      hue = hues[i];
+	      dex[hue] = dex[hue].toString(16);
+	      if (hue.length < 2) { hue = 0+hue; }
+	      hex += dex[hue];
+	    }
+	    if (hex[1]=='0' && hex[3]=='0' && hex[5]=='0') {
+	      hex = '#'+hex.slice(2,3)+hex.slice(4,5)+hex.slice(6,7);
+	    }
+	    return hex;
+	  }
+	};
+	
+	module.exports = colors;
+
+
+/***/ },
+/* 12 */
 /***/ function(module, exports) {
 
 	var Objects;
@@ -1039,12 +1134,14 @@
 	Objects = {
 	  index: {},
 	  people: [],
+	  terrain: [],
 	  all: [],
 	  count: -1,
 	};
 	
 	Objects.push = function (obj, classes) {
 	  var oo;
+	  if (!classes) { classes = []; }
 	  this.count++;
 	  this.index[this.count] = obj;
 	  obj.id = this.count;

@@ -10,8 +10,8 @@ var sprites = {
 
 var Spaceman = function () {
   this.pos = {
-    x: 0,
-    y: 32,
+    x: 12,
+    y: 24,
   };
   this.speed = {
     x: 0,
@@ -57,11 +57,11 @@ Spaceman.prototype.stopCheck = function () {
     this.gap[coord] += this.speed[coord];
     if (Math.abs(this.gap[coord]) > this.tileSize[coord]) {
       if (
-          (this.speed.x > 0 && !this.rightKeyDown)||
-          (this.speed.x < 0 && !this.leftKeyDown) ||
-          (this.speed.y > 0 && !this.downKeyDown) ||
-          (this.speed.y < 0 && !this.upKeyDown)
-         )
+        (this.speed.x > 0 && !this.rightKeyDown) ||
+        (this.speed.x < 0 && !this.leftKeyDown)  ||
+        (this.speed.y > 0 && !this.downKeyDown)  ||
+        (this.speed.y < 0 && !this.upKeyDown)
+      )
       this.speed[coord] = 0;
       this.gap[coord] = 0;
     }

@@ -2,6 +2,7 @@ console.log('Enter, spaceman.');
 
 // 1. REQUIRE DEPENDENCIES //
 var Spaceman = require('./spaceman.js');
+var Ground = require('./ground.js');
 var objects = require('./objects.js');
 
 // 2. INITIALIZE CANVAS //
@@ -58,6 +59,12 @@ var renderPixels = function () {
 
 // 6. INITIALIZE WORLD //
 var initializeWorld = function () {
+  var x;
+  for (y=0 ; y<14 ; y++) {
+    for (x=0 ; x<15 ; x++) {
+      objects.push(new Ground (x*12, 36+y*6), ['terrain']);
+    }
+  }
   var player = new Spaceman ();
   objects.push(player, ['people']);
   window.onkeydown = function (event) {
@@ -100,5 +107,5 @@ window.onload = function () {
       if (obj.draw) { obj.draw(screen); }
     }
     renderPixels();
-  }, 32);
+  }, 48);
 };
