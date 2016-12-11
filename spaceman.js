@@ -49,7 +49,9 @@
 	// 1. REQUIRE DEPENDENCIES //
 	var Spaceman = __webpack_require__(1);
 	var Ground = __webpack_require__(9);
-	var objects = __webpack_require__(12);
+	var Board = __webpack_require__(12);
+	var Tile = __webpack_require__(14);
+	var objects = __webpack_require__(13);
 	
 	// 2. INITIALIZE CANVAS //
 	var initializeCanvas = function () {
@@ -103,8 +105,8 @@
 	  }
 	};
 	
-	// 6. INITIALIZE WORLD //
-	var initializeWorld = function () {
+	// 6. INITIALIZE PLAYER //
+	var initializePlayer = function () {
 	  var x;
 	  for (y=0 ; y<14 ; y++) {
 	    for (x=0 ; x<15 ; x++) {
@@ -139,13 +141,22 @@
 	      player.upKeyDown = false;
 	    }
 	  };
+	  return player;
+	};
+	
+	var initializeBoard = function (player) {
+	  var board = new Board (6, 6);
+	  board.matrix[4][2] = new Tile ();
+	  board.matrix[4][2].player = true;
+	  return board;
 	};
 	
 	// 7. START GAME //
 	window.onload = function () {
 	  initializeCanvas();
 	  populatePixels();
-	  initializeWorld();
+	  var player = initializePlayer();
+	  var board = initializeBoard(player);
 	  window.setInterval(function () {
 	    for (i=0 ; i<objects.all.length ; i++) {
 	      obj = objects.index[objects.all[i]];
@@ -153,7 +164,7 @@
 	      if (obj.draw) { obj.draw(screen); }
 	    }
 	    renderPixels();
-	  }, 48);
+	  }, 36);
 	};
 
 
@@ -1132,6 +1143,36 @@
 
 /***/ },
 /* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Tile = __webpack_require__(14);
+	
+	var Board = function (width, height, tileSize) {
+	  this.width = width;
+	  this.height = height;
+	  this.buildMatrix = function () {
+	    var matrix; var row; var x; var y;
+	    matrix = [];
+	    for (y=0 ; y<this.height ; y++) {
+	      row = [];
+	      for (x=0 ; x<this.width ; x++) {
+	        row.push(new Tile (tileSize, tileSize));
+	      }
+	      matrix.push(row);
+	    }
+	    return matrix;
+	  };
+	  this.matrix = this.buildMatrix();
+	};
+	
+	Board.prototype.act = function () {
+	};
+	
+	module.exports = Board;
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports) {
 
 	var Objects;
@@ -1157,6 +1198,33 @@
 	};
 	
 	module.exports = Objects;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	var Tile = function (width, height) {
+	  this.width = width;
+	  this.height = height;
+	  this.buildMatrix = function () {
+	    var matrix; var row; var x; var y;
+	    matrix = [];
+	    for (y=0 ; y<this.height ; y++) {
+	      row = [];
+	      for (x=0 ; x<this.width ; x++) {
+	        row.push({});
+	      }
+	      matrix.push(row);
+	    }
+	    return matrix;
+	  };
+	  this.matrix = this.buildMatrix();
+	};
+	
+	Tile.prototype.act = function () {};
+	
+	module.exports = Tile;
 
 
 /***/ }
