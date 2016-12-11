@@ -100,8 +100,12 @@ var initializePlayer = function () {
 
 var initializeBoard = function (player) {
   var board = new Board (6, 6);
-  board.matrix[4][2] = new Tile ();
-  board.matrix[4][2].player = true;
+  board.matrix[4][2] = new Tile (8, 8);
+  board.matrix[4][2].receiveObject(player, 5, 5);
+  player.board = board.matrix;
+  player.tile = board.matrix[4][2];
+  player.square = board.matrix[4][2].matrix[5][5];
+  board.dealCards();
   return board;
 };
 

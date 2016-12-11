@@ -50,8 +50,8 @@
 	var Spaceman = __webpack_require__(1);
 	var Ground = __webpack_require__(9);
 	var Board = __webpack_require__(12);
-	var Tile = __webpack_require__(14);
-	var objects = __webpack_require__(13);
+	var Tile = __webpack_require__(13);
+	var objects = __webpack_require__(15);
 	
 	// 2. INITIALIZE CANVAS //
 	var initializeCanvas = function () {
@@ -146,8 +146,12 @@
 	
 	var initializeBoard = function (player) {
 	  var board = new Board (6, 6);
-	  board.matrix[4][2] = new Tile ();
-	  board.matrix[4][2].player = true;
+	  board.matrix[4][2] = new Tile (8, 8);
+	  board.matrix[4][2].receiveObject(player, 5, 5);
+	  player.board = board.matrix;
+	  player.tile = board.matrix[4][2];
+	  player.square = board.matrix[4][2].matrix[5][5];
+	  board.dealCards();
 	  return board;
 	};
 	
@@ -1145,7 +1149,7 @@
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Tile = __webpack_require__(14);
+	var Tile = __webpack_require__(13);
 	
 	var Board = function (width, height, tileSize) {
 	  this.width = width;
@@ -1156,7 +1160,7 @@
 	    for (y=0 ; y<this.height ; y++) {
 	      row = [];
 	      for (x=0 ; x<this.width ; x++) {
-	        row.push(new Tile (tileSize, tileSize));
+	        row.push(new Tile (tileSize, tileSize, x, y));
 	      }
 	      matrix.push(row);
 	    }
@@ -1165,14 +1169,56 @@
 	  this.matrix = this.buildMatrix();
 	};
 	
-	Board.prototype.act = function () {
-	};
+	Board.prototype.dealCards = function () {};
 	
 	module.exports = Board;
 
 
 /***/ },
 /* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Square = __webpack_require__(14);
+	
+	var Tile = function (width, height, x, y) {
+	  this.x = x; this.y = y;
+	  this.width = width; this.height = height;
+	  this.buildMatrix = function () {
+	    var matrix; var row; var x; var y;
+	    matrix = [];
+	    for (y=0 ; y<this.height ; y++) {
+	      row = [];
+	      for (x=0 ; x<this.width ; x++) {
+	        row.push(new Square (x, y));
+	      }
+	      matrix.push(row);
+	    }
+	    return matrix;
+	  };
+	  this.matrix = this.buildMatrix();
+	};
+	
+	Tile.prototype.receiveObject = function (object, x, y) {
+	  this.matrix[y][x].content = object;
+	};
+	
+	module.exports = Tile;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	var Square = function (x, y) {
+	  this.x = x; this.y = y;
+	  this.content = false;
+	};
+	
+	module.exports = Square;
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports) {
 
 	var Objects;
@@ -1198,33 +1244,6 @@
 	};
 	
 	module.exports = Objects;
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports) {
-
-	var Tile = function (width, height) {
-	  this.width = width;
-	  this.height = height;
-	  this.buildMatrix = function () {
-	    var matrix; var row; var x; var y;
-	    matrix = [];
-	    for (y=0 ; y<this.height ; y++) {
-	      row = [];
-	      for (x=0 ; x<this.width ; x++) {
-	        row.push({});
-	      }
-	      matrix.push(row);
-	    }
-	    return matrix;
-	  };
-	  this.matrix = this.buildMatrix();
-	};
-	
-	Tile.prototype.act = function () {};
-	
-	module.exports = Tile;
 
 
 /***/ }

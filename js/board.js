@@ -9,7 +9,7 @@ var Board = function (width, height, tileSize) {
     for (y=0 ; y<this.height ; y++) {
       row = [];
       for (x=0 ; x<this.width ; x++) {
-        row.push(new Tile (tileSize, tileSize));
+        row.push(new Tile (tileSize, tileSize, x, y));
       }
       matrix.push(row);
     }
@@ -18,7 +18,6 @@ var Board = function (width, height, tileSize) {
   this.matrix = this.buildMatrix();
 };
 
-Board.prototype.act = function () {
-};
+Board.prototype.dealCards = function () {};
 
 module.exports = Board;
