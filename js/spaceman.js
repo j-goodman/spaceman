@@ -41,12 +41,19 @@ var Spaceman = function () {
 };
 
 Spaceman.prototype.draw = function (screen) {
-  this.sprite.draw(screen, this.pos, this.frame);
+  this.sprite.draw(screen, {
+    x: this.square.x * this.tile.squareSize.x,
+    y: this.square.y * this.tile.squareSize.y,
+  }, this.frame);
 };
 
 Spaceman.prototype.act = function () {
   this.stopCheck();
   this.setSprite();
+};
+
+Spaceman.prototype.updatePosition = function () {
+  this.tile.squareUpdateQueue.push(this.square);
 };
 
 Spaceman.prototype.stopCheck = function () {
@@ -69,13 +76,17 @@ Spaceman.prototype.stopCheck = function () {
 };
 
 Spaceman.prototype.walkLateral = function (direction) {
-  this.speed.x = 1*direction;
+  this.updatePosition();
+  this.square = this.tile.matrix[this.square.y][this.square.x+(1*direction)];
+  this.updatePosition();
   this.gap.x = 0;
   this.frame = 0;
 };
 
 Spaceman.prototype.walkVertical = function (direction) {
-  this.speed.y = 1*direction;
+  this.updatePosition();
+  this.square = this.tile.matrix[this.square.y+(1*direction)][this.square.x];
+  this.updatePosition();
   this.gap.y = 0;
   this.frame = 0;
 };

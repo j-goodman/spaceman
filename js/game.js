@@ -54,7 +54,7 @@ var renderPixels = function () {
       pixel = screen.pixels[y][x];
       ctx.fillStyle = pixel.hex;
       ctx.fillRect(pixel.x*4, pixel.y*4, 4, 4);
-      pixel.hex = '#000';
+      // pixel.hex = '#000';
     }
   }
 };
@@ -69,6 +69,7 @@ var initializePlayer = function () {
   }
   var player = new Spaceman ();
   objects.push(player, ['people']);
+  // Initialize player key controls
   window.onkeydown = function (event) {
     if (event.keyCode === 39) {
       player.walkLateral(1);
@@ -100,8 +101,9 @@ var initializePlayer = function () {
 
 var initializeBoard = function (player) {
   var board = new Board (6, 6);
-  board.matrix[4][2] = new Tile (8, 8);
+  board.matrix[4][2] = new Tile (8, 8, 4, 2, screen);
   board.matrix[4][2].receiveObject(player, 5, 5);
+  board.player = player;
   player.board = board.matrix;
   player.tile = board.matrix[4][2];
   player.square = board.matrix[4][2].matrix[5][5];
@@ -115,12 +117,10 @@ window.onload = function () {
   populatePixels();
   var player = initializePlayer();
   var board = initializeBoard(player);
+  board.player.tile.init();
   window.setInterval(function () {
-    for (i=0 ; i<objects.all.length ; i++) {
-      obj = objects.index[objects.all[i]];
-      if (obj.act) { obj.act(); }
-      if (obj.draw) { obj.draw(screen); }
-    }
+    player.tile.act();
+    player.tile.draw();
     renderPixels();
   }, 36);
 };

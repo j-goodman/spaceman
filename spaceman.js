@@ -100,7 +100,7 @@
 	      pixel = screen.pixels[y][x];
 	      ctx.fillStyle = pixel.hex;
 	      ctx.fillRect(pixel.x*4, pixel.y*4, 4, 4);
-	      pixel.hex = '#000';
+	      // pixel.hex = '#000';
 	    }
 	  }
 	};
@@ -115,6 +115,7 @@
 	  }
 	  var player = new Spaceman ();
 	  objects.push(player, ['people']);
+	  // Initialize player key controls
 	  window.onkeydown = function (event) {
 	    if (event.keyCode === 39) {
 	      player.walkLateral(1);
@@ -146,8 +147,9 @@
 	
 	var initializeBoard = function (player) {
 	  var board = new Board (6, 6);
-	  board.matrix[4][2] = new Tile (8, 8);
+	  board.matrix[4][2] = new Tile (8, 8, 4, 2, screen);
 	  board.matrix[4][2].receiveObject(player, 5, 5);
+	  board.player = player;
 	  player.board = board.matrix;
 	  player.tile = board.matrix[4][2];
 	  player.square = board.matrix[4][2].matrix[5][5];
@@ -161,12 +163,10 @@
 	  populatePixels();
 	  var player = initializePlayer();
 	  var board = initializeBoard(player);
+	  board.player.tile.init();
 	  window.setInterval(function () {
-	    for (i=0 ; i<objects.all.length ; i++) {
-	      obj = objects.index[objects.all[i]];
-	      if (obj.act) { obj.act(); }
-	      if (obj.draw) { obj.draw(screen); }
-	    }
+	    player.tile.act();
+	    player.tile.draw();
 	    renderPixels();
 	  }, 36);
 	};
@@ -219,12 +219,19 @@
 	};
 	
 	Spaceman.prototype.draw = function (screen) {
-	  this.sprite.draw(screen, this.pos, this.frame);
+	  this.sprite.draw(screen, {
+	    x: this.square.x * this.tile.squareSize.x,
+	    y: this.square.y * this.tile.squareSize.y,
+	  }, this.frame);
 	};
 	
 	Spaceman.prototype.act = function () {
 	  this.stopCheck();
 	  this.setSprite();
+	};
+	
+	Spaceman.prototype.updatePosition = function () {
+	  this.tile.squareUpdateQueue.push(this.square);
 	};
 	
 	Spaceman.prototype.stopCheck = function () {
@@ -247,13 +254,17 @@
 	};
 	
 	Spaceman.prototype.walkLateral = function (direction) {
-	  this.speed.x = 1*direction;
+	  this.updatePosition();
+	  this.square = this.tile.matrix[this.square.y][this.square.x+(1*direction)];
+	  this.updatePosition();
 	  this.gap.x = 0;
 	  this.frame = 0;
 	};
 	
 	Spaceman.prototype.walkVertical = function (direction) {
-	  this.speed.y = 1*direction;
+	  this.updatePosition();
+	  this.square = this.tile.matrix[this.square.y+(1*direction)][this.square.x];
+	  this.updatePosition();
 	  this.gap.y = 0;
 	  this.frame = 0;
 	};
@@ -1180,9 +1191,16 @@
 
 	var Square = __webpack_require__(14);
 	
-	var Tile = function (width, height, x, y) {
+	var Tile = function (width, height, x, y, screen) {
 	  this.x = x; this.y = y;
 	  this.width = width; this.height = height;
+	  this.objects = [];
+	  this.squareUpdateQueue = [];
+	  this.screen = screen;
+	  this.squareSize = {
+	    x: 24,
+	    y: 8,
+	  };
 	  this.buildMatrix = function () {
 	    var matrix; var row; var x; var y;
 	    matrix = [];
@@ -1200,6 +1218,29 @@
 	
 	Tile.prototype.receiveObject = function (object, x, y) {
 	  this.matrix[y][x].content = object;
+	  this.objects.push(object);
+	};
+	
+	Tile.prototype.init = function () {
+	  var i;
+	  for (i=0 ; i<this.objects.length ; i++) {
+	    this.objects[i].draw(this.screen);
+	  }
+	};
+	
+	Tile.prototype.act = function () {
+	  var i;
+	  for (i=0 ; i<this.objects.length ; i++) {
+	    this.objects[i].act();
+	  }
+	};
+	
+	Tile.prototype.draw = function () {
+	  var i; var sq;
+	  for (i=0 ; i<this.squareUpdateQueue.length ; i++) {
+	    sq = this.squareUpdateQueue[i];
+	    sq.draw(this.screen);
+	  }
 	};
 	
 	module.exports = Tile;
@@ -1207,11 +1248,21 @@
 
 /***/ },
 /* 14 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	var Sprite = __webpack_require__(2);
+	var drawEmpty = __webpack_require__(10);
+	
 	var Square = function (x, y) {
 	  this.x = x; this.y = y;
 	  this.content = false;
+	  this.drawEmpty = drawEmpty;
+	};
+	
+	Square.prototype.draw = function (screen) {
+	  if (this.content) {
+	    this.content.draw(screen);
+	  }
 	};
 	
 	module.exports = Square;
