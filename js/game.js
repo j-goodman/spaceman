@@ -61,27 +61,20 @@ var renderPixels = function () {
 
 // 6. INITIALIZE PLAYER //
 var initializePlayer = function () {
-  var x;
-  for (y=0 ; y<14 ; y++) {
-    for (x=0 ; x<15 ; x++) {
-      objects.push(new Ground (x*12, 36+y*6), ['terrain']);
-    }
-  }
   var player = new Spaceman ();
-  objects.push(player, ['people']);
   // Initialize player key controls
   window.onkeydown = function (event) {
     if (event.keyCode === 39) {
-      player.walkLateral(1);
+      player.walkRight();
       player.rightKeyDown = true;
     } else if (event.keyCode == 37) {
-      player.walkLateral(-1);
+      player.walkLeft();
       player.leftKeyDown = true;
     } else if (event.keyCode == 40) {
-      player.walkVertical(1);
+      player.walkDown();
       player.downKeyDown = true;
     } else if (event.keyCode == 38) {
-      player.walkVertical(-1);
+      player.walkUp();
       player.upKeyDown = true;
     }
   };
@@ -101,12 +94,12 @@ var initializePlayer = function () {
 
 var initializeBoard = function (player) {
   var board = new Board (6, 6);
-  board.matrix[4][2] = new Tile (8, 8, 4, 2, screen);
-  board.matrix[4][2].receiveObject(player, 5, 5);
+  board.matrix[5][5] = new Tile (8, 8, 4, 2, screen);
+  board.matrix[5][5].receiveObject(player, 3, 3);
   board.player = player;
   player.board = board.matrix;
-  player.tile = board.matrix[4][2];
-  player.square = board.matrix[4][2].matrix[5][5];
+  player.tile = board.matrix[5][5];
+  player.square = board.matrix[5][5].matrix[3][3];
   board.dealCards();
   return board;
 };

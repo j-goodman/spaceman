@@ -107,27 +107,20 @@
 	
 	// 6. INITIALIZE PLAYER //
 	var initializePlayer = function () {
-	  var x;
-	  for (y=0 ; y<14 ; y++) {
-	    for (x=0 ; x<15 ; x++) {
-	      objects.push(new Ground (x*12, 36+y*6), ['terrain']);
-	    }
-	  }
 	  var player = new Spaceman ();
-	  objects.push(player, ['people']);
 	  // Initialize player key controls
 	  window.onkeydown = function (event) {
 	    if (event.keyCode === 39) {
-	      player.walkLateral(1);
+	      player.walkRight();
 	      player.rightKeyDown = true;
 	    } else if (event.keyCode == 37) {
-	      player.walkLateral(-1);
+	      player.walkLeft();
 	      player.leftKeyDown = true;
 	    } else if (event.keyCode == 40) {
-	      player.walkVertical(1);
+	      player.walkDown();
 	      player.downKeyDown = true;
 	    } else if (event.keyCode == 38) {
-	      player.walkVertical(-1);
+	      player.walkUp();
 	      player.upKeyDown = true;
 	    }
 	  };
@@ -147,12 +140,12 @@
 	
 	var initializeBoard = function (player) {
 	  var board = new Board (6, 6);
-	  board.matrix[4][2] = new Tile (8, 8, 4, 2, screen);
-	  board.matrix[4][2].receiveObject(player, 5, 5);
+	  board.matrix[5][5] = new Tile (8, 8, 4, 2, screen);
+	  board.matrix[5][5].receiveObject(player, 3, 3);
 	  board.player = player;
 	  player.board = board.matrix;
-	  player.tile = board.matrix[4][2];
-	  player.square = board.matrix[4][2].matrix[5][5];
+	  player.tile = board.matrix[5][5];
+	  player.square = board.matrix[5][5].matrix[3][3];
 	  board.dealCards();
 	  return board;
 	};
@@ -187,22 +180,6 @@
 	};
 	
 	var Spaceman = function () {
-	  this.pos = {
-	    x: 12,
-	    y: 24,
-	  };
-	  this.speed = {
-	    x: 0,
-	    y: 0,
-	  };
-	  this.gap = {
-	    x: 0,
-	    y: 0,
-	  };
-	  this.tileSize = {
-	    x: 12,
-	    y: 6,
-	  };
 	  this.sprites = {};
 	  this.sprites.standingRight = new Sprite (sprites.standingRight);
 	  this.sprites.standingLeft = new Sprite (sprites.standingRight, 'xflip');
@@ -214,108 +191,99 @@
 	  this.sprites.walkingUp = new Sprite (sprites.walkingUp);
 	  this.sprite = this.sprites.standingForward;
 	  this.frame = 0;
+	  this.offset = {
+	    x: 0,
+	    y: 0,
+	  };
+	  this.actionQueue = [];
 	  this.facing = 'down';
 	  this.microFrame = 0;
 	};
 	
 	Spaceman.prototype.draw = function (screen) {
 	  this.sprite.draw(screen, {
-	    x: this.square.x * this.tile.squareSize.x,
-	    y: this.square.y * this.tile.squareSize.y,
+	    x: (this.square.x * this.tile.squareSize.x) + this.offset.x,
+	    y: (this.square.y * this.tile.squareSize.y) + this.offset.y,
 	  }, this.frame);
 	};
 	
 	Spaceman.prototype.act = function () {
-	  this.stopCheck();
+	  var i;
 	  this.setSprite();
+	  if (this.actionQueue[0]) {
+	    this.actionQueue.shift()();
+	  }
 	};
 	
 	Spaceman.prototype.updatePosition = function () {
 	  this.tile.squareUpdateQueue.push(this.square);
 	};
 	
-	Spaceman.prototype.stopCheck = function () {
-	  var indeces = ['x', 'y']; var i; var coord;
-	  for (i = 0 ; i<2 ; i++) {
-	    coord = indeces[i];
-	    this.pos[coord] += this.speed[coord];
-	    this.gap[coord] += this.speed[coord];
-	    if (Math.abs(this.gap[coord]) > this.tileSize[coord]) {
-	      if (
-	        (this.speed.x > 0 && !this.rightKeyDown) ||
-	        (this.speed.x < 0 && !this.leftKeyDown)  ||
-	        (this.speed.y > 0 && !this.downKeyDown)  ||
-	        (this.speed.y < 0 && !this.upKeyDown)
-	      )
-	      this.speed[coord] = 0;
-	      this.gap[coord] = 0;
-	    }
+	Spaceman.prototype.walkRight = function (direction) {
+	  this.walk('x', 1, this.sprites.walkingRight);
+	};
+	
+	Spaceman.prototype.walkLeft = function (direction) {
+	  this.walk('x', -1, this.sprites.walkingLeft);
+	};
+	
+	Spaceman.prototype.walkDown = function (direction) {
+	  this.walk('y', 1, this.sprites.walkingDown);
+	};
+	
+	Spaceman.prototype.walkUp = function (direction) {
+	  this.walk('y', -1, this.sprites.walkingUp);
+	};
+	
+	Spaceman.prototype.walk = function (xy, direction, sprite) {
+	  var i;
+	  this.updatePosition();
+	  this.sprite = sprite;
+	  this.actionQueue = [];
+	  for (i=0 ; i<this.sprite.image.length/2 ; i++) {
+	    this.actionQueue.push(function () {
+	      this.frame += 1;
+	      this.offset[xy] += (this.tile.squareSize[xy]/this.sprite.image.length)*direction ; i++;
+	    }.bind(this));
 	  }
-	};
-	
-	Spaceman.prototype.walkLateral = function (direction) {
-	  this.updatePosition();
-	  this.square = this.tile.matrix[this.square.y][this.square.x+(1*direction)];
-	  this.updatePosition();
-	  this.gap.x = 0;
+	  this.actionQueue.push(function () {
+	    this.offset[xy] *= -1;
+	    var oldSquare = this.square;
+	    if (xy = 'x') {
+	      this.square = this.tile.matrix[this.square.y][this.square.x + direction];
+	    } else {
+	      this.square = this.tile.matrix[this.square.y + direction][this.square.x];
+	    }
+	    oldSquare.content = false;
+	    this.square.content = this;
+	  }.bind(this));
+	  for (i=0 ; i<this.sprite.image.length/2 ; i++) {
+	    this.actionQueue.push(function () {
+	      this.frame += 1;
+	      this.offset[xy] += this.tile.squareSize[xy]/this.sprite.image.length ; i++;
+	    }.bind(this));
+	  }
+	  this.actionQueue.push(function () {
+	    this.updatePosition();
+	  }.bind(this));
 	  this.frame = 0;
-	};
-	
-	Spaceman.prototype.walkVertical = function (direction) {
-	  this.updatePosition();
-	  this.square = this.tile.matrix[this.square.y+(1*direction)][this.square.x];
-	  this.updatePosition();
-	  this.gap.y = 0;
-	  this.frame = 0;
-	};
+	}
 	
 	Spaceman.prototype.setSprite = function () {
 	  var frameDelay = 4;
-	  if (this.speed.x > 0) {
-	    this.sprite = this.sprites.walkingRight;
-	    this.facing = 'right';
-	    this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
-	  } else if (this.speed.x < 0) {
-	    this.sprite = this.sprites.walkingLeft;
-	    this.facing = 'left';
-	    this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
-	  } else if (this.speed.y < 0) {
-	    this.sprite = this.sprites.walkingUp;
-	    this.facing = 'up';
-	    this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
-	  } else if (this.speed.y > 0) {
-	    this.sprite = this.sprites.walkingDown;
-	    this.facing = 'down';
-	    this.microFrame = (this.frame+1 > this.sprite.image.length-1) ? 0 : this.microFrame + 1;
-	  } else {
-	    switch (this.facing) {
-	      case 'right':
-	        this.sprite = this.sprites.standingRight;
-	        break;
-	      case 'left':
-	        this.sprite = this.sprites.standingLeft;
-	        break;
-	      case 'down':
-	        this.sprite = this.sprites.standingForward;
-	        var iris; var white;
-	        if (!Math.floor(Math.random()*120)) {
-	          iris = this.sprite.image[0][6][3];
-	          white = this.sprite.image[0][6][4];
-	          this.sprite.image[0][6][3] = white;
-	          this.sprite.image[0][7][3] = white;
-	          this.sprite.image[0][6][4] = iris;
-	          this.sprite.image[0][7][4] = iris;
-	          this.sprite.image[0][6][6] = white;
-	          this.sprite.image[0][7][6] = white;
-	          this.sprite.image[0][6][7] = iris;
-	          this.sprite.image[0][7][7] = iris;
-	        }
-	        break;
-	      case 'up':
-	        this.sprite = this.sprites.standingBackward;
-	        break;
-	    }
-	  }
+	  var iris; var white;
+	  // if (!Math.floor(Math.random()*120)) {
+	  //   iris = this.sprite.image[0][6][3];
+	  //   white = this.sprite.image[0][6][4];
+	  //   this.sprite.image[0][6][3] = white;
+	  //   this.sprite.image[0][7][3] = white;
+	  //   this.sprite.image[0][6][4] = iris;
+	  //   this.sprite.image[0][7][4] = iris;
+	  //   this.sprite.image[0][6][6] = white;
+	  //   this.sprite.image[0][7][6] = white;
+	  //   this.sprite.image[0][6][7] = iris;
+	  //   this.sprite.image[0][7][7] = iris;
+	  // }
 	  this.frame = Math.floor(this.microFrame/frameDelay);
 	};
 	
