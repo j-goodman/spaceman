@@ -191,6 +191,7 @@
 	  this.sprites.walkingUp = new Sprite (sprites.walkingUp);
 	  this.sprite = this.sprites.standingForward;
 	  this.frame = 0;
+	  this.drawn = false;
 	  this.offset = {
 	    x: 0,
 	    y: 0,
@@ -198,6 +199,8 @@
 	  this.actionQueue = [];
 	  this.facing = 'down';
 	  this.microFrame = 0;
+	
+	  this.ctx = document.getElementById("canvas").getContext('2d');
 	};
 	
 	Spaceman.prototype.draw = function (screen) {
@@ -205,6 +208,7 @@
 	    x: (this.square.x * this.tile.squareSize.x) + this.offset.x,
 	    y: (this.square.y * this.tile.squareSize.y) + this.offset.y,
 	  }, this.frame);
+	  this.drawn = true;
 	};
 	
 	Spaceman.prototype.act = function () {
@@ -249,7 +253,8 @@
 	  this.actionQueue.push(function () {
 	    this.offset[xy] *= -1;
 	    var oldSquare = this.square;
-	    if (xy = 'x') {
+	    this.tile.squareUpdateQueue.push(oldSquare);
+	    if (xy == 'x') {
 	      this.square = this.tile.matrix[this.square.y][this.square.x + direction];
 	    } else {
 	      this.square = this.tile.matrix[this.square.y + direction][this.square.x];
@@ -265,6 +270,7 @@
 	  }
 	  this.actionQueue.push(function () {
 	    this.updatePosition();
+	    this.offset[xy] = 0;
 	  }.bind(this));
 	  this.frame = 0;
 	}
@@ -1175,7 +1181,7 @@
 	    for (y=0 ; y<this.height ; y++) {
 	      row = [];
 	      for (x=0 ; x<this.width ; x++) {
-	        row.push(new Square (x, y));
+	        row.push(new Square (x, y, this));
 	      }
 	      matrix.push(row);
 	    }
@@ -1221,15 +1227,28 @@
 	var Sprite = __webpack_require__(2);
 	var drawEmpty = __webpack_require__(10);
 	
-	var Square = function (x, y) {
+	var Square = function (x, y, tile) {
 	  this.x = x; this.y = y;
+	  this.tile = tile;
 	  this.content = false;
 	  this.drawEmpty = drawEmpty;
+	  this.surfaceColor = '#6da';
 	};
 	
 	Square.prototype.draw = function (screen) {
 	  if (this.content) {
 	    this.content.draw(screen);
+	  }
+	};
+	
+	Square.prototype.drawSurface = function (screen) {
+	  var x; var y;
+	  for (y=0 ; y<this.tile.squareSize ; y++) {
+	    for (x=0 ; x<this.width ; x++) {
+	      if (screen.pixels[pos.y+y] && screen.pixels[pos.y+y][pos.x+x]) {
+	        screen.pixels[pos.y+y][pos.x+x].hex = this.surfaceColor;
+	      }
+	    }
 	  }
 	};
 	

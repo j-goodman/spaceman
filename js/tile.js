@@ -16,7 +16,7 @@ var Tile = function (width, height, x, y, screen) {
     for (y=0 ; y<this.height ; y++) {
       row = [];
       for (x=0 ; x<this.width ; x++) {
-        row.push(new Square (x, y));
+        row.push(new Square (x, y, this));
       }
       matrix.push(row);
     }

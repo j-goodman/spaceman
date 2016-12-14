@@ -20,6 +20,7 @@ var Spaceman = function () {
   this.sprites.walkingUp = new Sprite (sprites.walkingUp);
   this.sprite = this.sprites.standingForward;
   this.frame = 0;
+  this.drawn = false;
   this.offset = {
     x: 0,
     y: 0,
@@ -27,6 +28,8 @@ var Spaceman = function () {
   this.actionQueue = [];
   this.facing = 'down';
   this.microFrame = 0;
+
+  this.ctx = document.getElementById("canvas").getContext('2d');
 };
 
 Spaceman.prototype.draw = function (screen) {
@@ -34,6 +37,7 @@ Spaceman.prototype.draw = function (screen) {
     x: (this.square.x * this.tile.squareSize.x) + this.offset.x,
     y: (this.square.y * this.tile.squareSize.y) + this.offset.y,
   }, this.frame);
+  this.drawn = true;
 };
 
 Spaceman.prototype.act = function () {
@@ -78,7 +82,8 @@ Spaceman.prototype.walk = function (xy, direction, sprite) {
   this.actionQueue.push(function () {
     this.offset[xy] *= -1;
     var oldSquare = this.square;
-    if (xy = 'x') {
+    this.tile.squareUpdateQueue.push(oldSquare);
+    if (xy == 'x') {
       this.square = this.tile.matrix[this.square.y][this.square.x + direction];
     } else {
       this.square = this.tile.matrix[this.square.y + direction][this.square.x];
@@ -94,6 +99,7 @@ Spaceman.prototype.walk = function (xy, direction, sprite) {
   }
   this.actionQueue.push(function () {
     this.updatePosition();
+    this.offset[xy] = 0;
   }.bind(this));
   this.frame = 0;
 }
