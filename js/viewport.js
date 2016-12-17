@@ -29,8 +29,27 @@ Viewport.prototype.render = function (ctx) {
       }
     }
   }
+  this.drawSky(ctx, this.planet);
   for (i=0 ; i<objectQueue.length ; i++) {
     objectQueue[i].renderContent(ctx, this.origin);
+  }
+};
+
+Viewport.prototype.drawSky = function (ctx, planet) {
+  var offset;
+  for (y=0 ; y<48 ; y++) {
+    for (x=0 ; x<240 ; x++) {
+      offset = y + planet.time;
+      if (offset >= planet.sky.length) {
+        offset -= planet.sky.length;
+      }
+      if (!planet.sky[offset]) {
+        console.log('offset: ', offset);
+        console.log('sky length: ', planet.sky.length);
+      }
+      ctx.fillStyle = planet.sky[offset][x];
+      ctx.fillRect(x * 3, y * 3, 3, 3);
+    }
   }
 };
 

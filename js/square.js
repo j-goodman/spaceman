@@ -1,15 +1,15 @@
-var Square = function (x, y, map) {
+var Square = function (x, y, dirtColor, map) {
   this.x = x;
   this.y = y;
   this.map = map;
   this.content = false;
-  this.dirtColor = '#b97';
+  this.dirtColor = dirtColor;
 };
 
 Square.prototype.renderEmpty = function (ctx, viewOrigin) {
   ctx.fillStyle = this.dirtColor;
   if (this.content) {
-    ctx.fillStyle = '#4ca';
+    ctx.fillStyle = '#fff';
   }
   ctx.fillRect((this.x - viewOrigin.x) * 60, (this.y - viewOrigin.y) * 28 + 142, 60, 28);
 };

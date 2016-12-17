@@ -26,11 +26,15 @@ var setupWorld = function () {
 
 // 4. DEFINE GAME FUNCTIONS //
 Game.advance = function () {
-  Game.viewport.render(ctx);
+  this.viewport.render(ctx);
+  this.planet.time += 1;
+  if (this.planet.time > 480) {
+    this.planet.time = 0;
+  }
 };
 
 Game.render = function () {
-  Game.viewport.render(ctx);
+  this.viewport.render(ctx);
 };
 
 window.onload = function () {
