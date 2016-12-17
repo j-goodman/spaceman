@@ -19,16 +19,22 @@ var initializeCanvas = function () {
 var setupWorld = function () {
   Game.planet = new Planet ();
   var spawnSquare = Game.planet.map[50][50];
-  Game.player = new Player (spawnSquare);
+  Game.player = new Player (Game, spawnSquare);
   Game.viewport = new Viewport (Game.planet, 45, 45);
   spawnSquare.content = Game.player;
+};
+
+// 4. DEFINE GAME FUNCTIONS //
+Game.advance = function () {
+  Game.viewport.render(ctx);
+};
+
+Game.render = function () {
+  Game.viewport.render(ctx);
 };
 
 window.onload = function () {
   initializeCanvas();
   setupWorld();
-  var interval = function () {
-    Game.viewport.render(ctx);
-  };
-  setInterval(interval, 32);
+  Game.advance();
 };

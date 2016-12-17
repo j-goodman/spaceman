@@ -19,11 +19,18 @@ Viewport.prototype.populateSquares = function () {
 };
 
 Viewport.prototype.render = function (ctx) {
-  var x; var y;
+  var x; var y; var i;
+  var objectQueue = [];
   for (y=0 ; y<12 ; y++) {
     for (x=0 ; x<12 ; x++) {
-      this.squares[y][x].render(ctx, this.origin);
+      this.squares[y][x].renderEmpty(ctx, this.origin);
+      if (this.squares[y][x].content) {
+        objectQueue.push(this.squares[y][x]);
+      }
     }
+  }
+  for (i=0 ; i<objectQueue.length ; i++) {
+    objectQueue[i].renderContent(ctx, this.origin);
   }
 };
 
