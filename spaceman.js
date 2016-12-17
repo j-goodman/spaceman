@@ -47,10 +47,10 @@
 	console.log("Enter, spaceman.");
 	
 	// 1. REQUIRE DEPENDENCIES //
-	var Player = __webpack_require__(3);
-	var Planet = __webpack_require__(1);
-	var Square = __webpack_require__(2);
-	var Viewport = __webpack_require__(4);
+	var Player = __webpack_require__(1);
+	var Planet = __webpack_require__(4);
+	var Square = __webpack_require__(5);
+	var Viewport = __webpack_require__(6);
 	var Game = {};
 	
 	// 2. INITIALIZE CANVAS //
@@ -84,57 +84,8 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Square = __webpack_require__(2);
-	
-	var Planet = function () {
-	  this.map = [];
-	  this.generate();
-	};
-	
-	Planet.prototype.generate = function () {
-	  var y; var x;
-	  for (y=0 ; y<144 ; y++) {
-	    this.map.push([]);
-	    for (x=0 ; x<144 ; x++) {
-	      this.map[y].push(new Square (x, y));
-	    }
-	  }
-	};
-	
-	module.exports = Planet;
-
-
-/***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	var Square = function (x, y) {
-	  this.x = x;
-	  this.y = y;
-	  this.content = false;
-	  this.dirtColor = '#b79';
-	};
-	
-	Square.prototype.render = function (ctx, viewOrigin) {
-	  ctx.fillStyle = this.dirtColor;
-	  if (this.content) {
-	    ctx.fillStyle = '#4ac';
-	  }
-	  ctx.fillRect((this.x - viewOrigin.x) * 60, (this.y - viewOrigin.y) * 28 + 142, 60, 28);
-	  if (this.content.sprite) {
-	    this.content.sprite.draw({x: (this.x - viewOrigin.x) * 60 + (60 - this.content.sprite.width * 3) / 2, y: (this.y - viewOrigin.y) * 28 + 142 + 15}, ctx);
-	  }
-	};
-	
-	module.exports = Square;
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var sprites = {
-	  standingDown: __webpack_require__(5),
+	  standingDown: __webpack_require__(2),
 	};
 	
 	var Player = function (square) {
@@ -146,46 +97,10 @@
 
 
 /***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	var Viewport = function (planet, x, y) {
-	  this.origin = {
-	    x: x,
-	    y: y,
-	  };
-	  this.planet = planet;
-	  this.squares = [];
-	  this.populateSquares();
-	};
-	
-	Viewport.prototype.populateSquares = function () {
-	  var x; var y;
-	  for (y=0 ; y<12 ; y++) {
-	    this.squares.push([]);
-	    for (x=0 ; x<12 ; x++) {
-	      this.squares[y].push(this.planet.map[this.origin.y+y][this.origin.x+x]);
-	    }
-	  }
-	};
-	
-	Viewport.prototype.render = function (ctx) {
-	  var x; var y;
-	  for (y=0 ; y<12 ; y++) {
-	    for (x=0 ; x<12 ; x++) {
-	      this.squares[y][x].render(ctx, this.origin);
-	    }
-	  }
-	};
-	
-	module.exports = Viewport;
-
-
-/***/ },
-/* 5 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Sprite = __webpack_require__(6);
+	var Sprite = __webpack_require__(3);
 	
 	var image = [
 	[
@@ -222,7 +137,7 @@
 
 
 /***/ },
-/* 6 */
+/* 3 */
 /***/ function(module, exports) {
 
 	var Sprite = function (image) {
@@ -249,6 +164,91 @@
 	};
 	
 	module.exports = Sprite;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Square = __webpack_require__(5);
+	
+	var Planet = function () {
+	  this.map = [];
+	  this.generate();
+	};
+	
+	Planet.prototype.generate = function () {
+	  var y; var x;
+	  for (y=0 ; y<144 ; y++) {
+	    this.map.push([]);
+	    for (x=0 ; x<144 ; x++) {
+	      this.map[y].push(new Square (x, y));
+	    }
+	  }
+	};
+	
+	module.exports = Planet;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	var Square = function (x, y) {
+	  this.x = x;
+	  this.y = y;
+	  this.content = false;
+	  this.dirtColor = '#b79';
+	};
+	
+	Square.prototype.render = function (ctx, viewOrigin) {
+	  ctx.fillStyle = this.dirtColor;
+	  if (this.content) {
+	    ctx.fillStyle = '#4ac';
+	  }
+	  ctx.fillRect((this.x - viewOrigin.x) * 60, (this.y - viewOrigin.y) * 28 + 142, 60, 28);
+	  if (this.content.sprite) {
+	    this.content.sprite.draw({x: (this.x - viewOrigin.x) * 60 + (60 - this.content.sprite.width * 3) / 2, y: (this.y - viewOrigin.y) * 28 + 142 + 15}, ctx);
+	  }
+	};
+	
+	module.exports = Square;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	var Viewport = function (planet, x, y) {
+	  this.origin = {
+	    x: x,
+	    y: y,
+	  };
+	  this.planet = planet;
+	  this.squares = [];
+	  this.populateSquares();
+	};
+	
+	Viewport.prototype.populateSquares = function () {
+	  var x; var y;
+	  for (y=0 ; y<12 ; y++) {
+	    this.squares.push([]);
+	    for (x=0 ; x<12 ; x++) {
+	      this.squares[y].push(this.planet.map[this.origin.y+y][this.origin.x+x]);
+	    }
+	  }
+	};
+	
+	Viewport.prototype.render = function (ctx) {
+	  var x; var y;
+	  for (y=0 ; y<12 ; y++) {
+	    for (x=0 ; x<12 ; x++) {
+	      this.squares[y][x].render(ctx, this.origin);
+	    }
+	  }
+	};
+	
+	module.exports = Viewport;
 
 
 /***/ }
