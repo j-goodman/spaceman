@@ -50,7 +50,7 @@
 	var Player = __webpack_require__(1);
 	var Planet = __webpack_require__(11);
 	var Square = __webpack_require__(12);
-	var Viewport = __webpack_require__(13);
+	var Viewport = __webpack_require__(14);
 	var Game = {};
 	
 	// 2. INITIALIZE CANVAS //
@@ -1243,7 +1243,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Square = __webpack_require__(12);
-	var Utils = __webpack_require__(14);
+	var Utils = __webpack_require__(13);
 	
 	var Planet = function () {
 	  this.map = [];
@@ -1306,7 +1306,7 @@
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Utils = __webpack_require__(14);
+	var Utils = __webpack_require__(13);
 	var hex = Utils.hex;
 	
 	var Square = function (x, y, dirtColor, map) {
@@ -1340,6 +1340,38 @@
 
 /***/ },
 /* 13 */
+/***/ function(module, exports) {
+
+	Utils = {
+	  hex: function (r, g, b) {
+	    // r, g, and b are integers between 0 and 255
+	    var i; var j;
+	    args = [r, g, b];
+	    for (j=0 ; j<3 ; j++) {
+	      if (args[j] > 255) {
+	        args[j] = 255;
+	      }
+	    colors = [
+	      Math.round(args[0]).toString(16),
+	      Math.round(args[1]).toString(16),
+	      Math.round(args[2]).toString(16),
+	    ];
+	    }
+	    for (i=0 ; i<3 ; i++) {
+	      if (colors[i].length < 2) {
+	        colors[i] = '0' + colors[i];
+	      }
+	    }
+	    var hexString = '#'+ colors.join('');
+	    return hexString;
+	  },
+	};
+	
+	module.exports = Utils;
+
+
+/***/ },
+/* 14 */
 /***/ function(module, exports) {
 
 	var Viewport = function (game, planet, x, y) {
@@ -1397,7 +1429,7 @@
 	
 	Viewport.prototype.shift = function (x, y) {
 	  var subShift = function () {
-	    if (this.shiftCount < 11) {
+	    if (this.shiftCount < 12) {
 	      this.origin.x += x;
 	      this.origin.y += y;
 	      this.shiftCount += 1;
@@ -1412,38 +1444,6 @@
 	};
 	
 	module.exports = Viewport;
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports) {
-
-	Utils = {
-	  hex: function (r, g, b) {
-	    // r, g, and b are integers between 0 and 255
-	    var i; var j;
-	    args = [r, g, b];
-	    for (j=0 ; j<3 ; j++) {
-	      if (args[j] > 255) {
-	        args[j] = 255;
-	      }
-	    colors = [
-	      Math.round(args[0]).toString(16),
-	      Math.round(args[1]).toString(16),
-	      Math.round(args[2]).toString(16),
-	    ];
-	    }
-	    for (i=0 ; i<3 ; i++) {
-	      if (colors[i].length < 2) {
-	        colors[i] = '0' + colors[i];
-	      }
-	    }
-	    var hexString = '#'+ colors.join('');
-	    return hexString;
-	  },
-	};
-	
-	module.exports = Utils;
 
 
 /***/ }

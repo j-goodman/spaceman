@@ -53,7 +53,7 @@ Viewport.prototype.drawSky = function (ctx, planet) {
 
 Viewport.prototype.shift = function (x, y) {
   var subShift = function () {
-    if (this.shiftCount < 11) {
+    if (this.shiftCount < 12) {
       this.origin.x += x;
       this.origin.y += y;
       this.shiftCount += 1;
