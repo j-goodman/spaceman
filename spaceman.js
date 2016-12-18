@@ -1451,7 +1451,9 @@
 	    if (this.shiftCount < 12) {
 	      this.origin.x += x;
 	      this.origin.y += y;
-	      this.planet.time -= y;
+	      if (this.planet.time - y > 0 && this.planet.time - y < 480) {
+	        this.planet.time -= y;
+	      }
 	      this.shiftCount += 1;
 	    } else {
 	      if (this.origin.x < 0) {
