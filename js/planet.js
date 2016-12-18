@@ -8,10 +8,11 @@ var Planet = function () {
 
 Planet.prototype.generate = function () {
   var y; var x;
+  var balancer = Math.round(Math.random()*255);
   this.dirtHues = {
-    r: Math.round(Math.random()*255),
-    g: Math.round(Math.random()*255),
-    b: Math.round(Math.random()*255),
+    r: (50 + Math.round(Math.random()*195) + balancer * 2) / 3,
+    g: (30 + Math.round(Math.random()*175) + balancer * 2) / 3,
+    b: (50 + Math.round(Math.random()*195) + balancer * 2) / 3,
   };
   this.dirtColor = hex(this.dirtHues.r, this.dirtHues.g, this.dirtHues.b);
   for (y=0 ; y<144 ; y++) {
@@ -22,8 +23,8 @@ Planet.prototype.generate = function () {
   }
   this.skyHues = {
     r: Math.random()*2,
-    g: Math.random()*2,
-    b: Math.random()*2,
+    g: Math.random()*1.8,
+    b: Math.random()*2.2,
   };
   this.sky = this.generateSky();
 };
