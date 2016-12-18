@@ -56,6 +56,9 @@ Viewport.prototype.shift = function (x, y) {
     if (this.shiftCount < 12) {
       this.origin.x += x;
       this.origin.y += y;
+      if (this.planet.time - y > 0 && this.planet.time - y < 480) {
+        this.planet.time -= y;
+      }
       this.shiftCount += 1;
     } else {
       clearInterval(this.shiftInterval);
