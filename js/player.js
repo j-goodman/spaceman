@@ -160,8 +160,8 @@ Player.prototype.checkIfStillWalking = function (x, y) {
 
 Player.prototype.changeSquare = function (x, y) {
   this.square.content = false;
-  this.square.map[this.square.y + y][this.square.x + x].content = this;
-  this.square = this.square.map[this.square.y + y][this.square.x + x];
+  this.square.fetch(this.square.x + x, this.square.y + y).content = this;
+  this.square = this.square.fetch(this.square.x + x, this.square.y + y);
   this.game.advance();
 };
 

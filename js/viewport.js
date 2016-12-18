@@ -15,7 +15,7 @@ Viewport.prototype.populateSquares = function () {
   for (y=0 ; y<12 ; y++) {
     this.squares.push([]);
     for (x=0 ; x<12 ; x++) {
-      this.squares[y].push(this.planet.map[this.origin.y+y][this.origin.x+x]);
+      this.squares[y].push(this.planet.map[0][0].fetch(this.origin.x + x, this.origin.y + y));
     }
   }
 };
@@ -25,15 +25,25 @@ Viewport.prototype.render = function (ctx) {
   var objectQueue = [];
   for (y=0 ; y<12 ; y++) {
     for (x=0 ; x<12 ; x++) {
-      this.squares[y][x].renderEmpty(ctx, this.origin);
+      this.squares[y][x].renderEmpty(ctx, {
+        x: x,
+        y: y,
+      });
       if (this.squares[y][x].content) {
-        objectQueue.push(this.squares[y][x]);
+        objectQueue.push({
+          square: this.squares[y][x],
+          x: x,
+          y: y,
+        });
       }
     }
   }
   this.drawSky(ctx, this.planet);
   for (i=0 ; i<objectQueue.length ; i++) {
-    objectQueue[i].renderContent(ctx, this.origin);
+    objectQueue[i].square.renderContent(ctx, {
+      x: objectQueue[i].x,
+      y: objectQueue[i].y,
+    });
   }
 };
 
@@ -52,15 +62,23 @@ Viewport.prototype.drawSky = function (ctx, planet) {
 };
 
 Viewport.prototype.shift = function (x, y) {
+  if (this.shifting) { return null; }
+  this.shifting = true;
   var subShift = function () {
     if (this.shiftCount < 12) {
       this.origin.x += x;
       this.origin.y += y;
-      if (this.planet.time - y > 0 && this.planet.time - y < 480) {
-        this.planet.time -= y;
-      }
       this.shiftCount += 1;
     } else {
+      if (this.origin.x < 0) {
+        this.origin.x += 144;
+      } else if (this.origin.y < 0) {
+        this.origin.y += 144;
+      }
+      this.origin.x = this.origin.x % 144;
+      this.origin.y = this.origin.y % 144;
+      console.log('Port: ', this.origin.x, this.origin.y);
+      this.shifting = false;
       clearInterval(this.shiftInterval);
     }
     this.populateSquares();

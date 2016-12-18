@@ -18,9 +18,9 @@ var initializeCanvas = function () {
 // 3. SETUP GAME WORLD //
 var setupWorld = function () {
   Game.planet = new Planet ();
-  var spawnSquare = Game.planet.map[50][50];
+  var spawnSquare = Game.planet.map[10][10];
   Game.player = new Player (Game, spawnSquare);
-  Game.viewport = new Viewport (Game, Game.planet, 45, 45);
+  Game.viewport = new Viewport (Game, Game.planet, 0, 0);
   spawnSquare.content = Game.player;
 };
 
