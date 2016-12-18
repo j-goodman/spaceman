@@ -19,7 +19,7 @@ Planet.prototype.generate = function () {
   for (y=0 ; y<144 ; y++) {
     this.map.push([]);
     for (x=0 ; x<144 ; x++) {
-      this.map[y].push(new Square (x, y, this.dirtColor, this.map));
+      this.map[y].push(new Square (x, y, this.dirtHues, this.map));
     }
   }
   this.skyHues = {

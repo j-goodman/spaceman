@@ -1,15 +1,15 @@
 var Utils = require('./utils.js');
 var hex = Utils.hex;
 
-var Square = function (x, y, dirtColor, map) {
+var Square = function (x, y, dirtHues, map) {
   this.x = x;
   this.y = y;
   this.map = map;
   this.content = false;
-  // this.dirtColor = dirtColor;
-  r = 150;
-  g = 50;
-  b = 70;
+  this.dirtHues = dirtHues;
+  r = dirtHues.r;
+  g = dirtHues.g;
+  b = dirtHues.b;
   this.dirtColor = hex((Math.random()*255 + r*22)/23,( Math.random()*255 + g*22)/23, (Math.random()*255 + b*22)/23);
 };
 
