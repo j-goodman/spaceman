@@ -1272,10 +1272,6 @@
 	    b: Math.random()*2.2,
 	  };
 	  this.sky = this.generateSky();
-	  this.map[10][10].dirtColor = '#800';
-	  this.map[9][10].dirtColor = '#300';
-	  this.map[10][9].dirtColor = '#300';
-	  this.map[9][9].dirtColor = '#800';
 	};
 	
 	var hex = Utils.hex;
