@@ -1,0 +1,6 @@
+** Add crashed spaceship to player spawn square
+** Add bottomless pits
+** Add text display system and intro blurb
+** Add loose items:
+  * plasma gun
+  * 

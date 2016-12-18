@@ -1451,6 +1451,7 @@
 	    if (this.shiftCount < 12) {
 	      this.origin.x += x;
 	      this.origin.y += y;
+	      this.planet.time -= y;
 	      this.shiftCount += 1;
 	    } else {
 	      if (this.origin.x < 0) {
@@ -1460,7 +1461,6 @@
 	      }
 	      this.origin.x = this.origin.x % 144;
 	      this.origin.y = this.origin.y % 144;
-	      console.log('Port: ', this.origin.x, this.origin.y);
 	      this.shifting = false;
 	      clearInterval(this.shiftInterval);
 	    }
