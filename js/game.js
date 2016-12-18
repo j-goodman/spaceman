@@ -20,7 +20,7 @@ var setupWorld = function () {
   Game.planet = new Planet ();
   var spawnSquare = Game.planet.map[50][50];
   Game.player = new Player (Game, spawnSquare);
-  Game.viewport = new Viewport (Game.planet, 45, 45);
+  Game.viewport = new Viewport (Game, Game.planet, 45, 45);
   spawnSquare.content = Game.player;
 };
 

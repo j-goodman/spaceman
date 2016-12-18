@@ -1,9 +1,16 @@
+var Utils = require('./utils.js');
+var hex = Utils.hex;
+
 var Square = function (x, y, dirtColor, map) {
   this.x = x;
   this.y = y;
   this.map = map;
   this.content = false;
-  this.dirtColor = dirtColor;
+  // this.dirtColor = dirtColor;
+  r = 150;
+  g = 50;
+  b = 70;
+  this.dirtColor = hex((Math.random()*255 + r*22)/23,( Math.random()*255 + g*22)/23, (Math.random()*255 + b*22)/23);
 };
 
 Square.prototype.renderEmpty = function (ctx, viewOrigin) {

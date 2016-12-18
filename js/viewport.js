@@ -1,8 +1,9 @@
-var Viewport = function (planet, x, y) {
+var Viewport = function (game, planet, x, y) {
   this.origin = {
     x: x,
     y: y,
   };
+  this.game = game;
   this.planet = planet;
   this.squares = [];
   this.populateSquares();
@@ -10,6 +11,7 @@ var Viewport = function (planet, x, y) {
 
 Viewport.prototype.populateSquares = function () {
   var x; var y;
+  this.squares = [];
   for (y=0 ; y<12 ; y++) {
     this.squares.push([]);
     for (x=0 ; x<12 ; x++) {
@@ -43,14 +45,26 @@ Viewport.prototype.drawSky = function (ctx, planet) {
       if (offset >= planet.sky.length) {
         offset -= planet.sky.length;
       }
-      if (!planet.sky[offset]) {
-        console.log('offset: ', offset);
-        console.log('sky length: ', planet.sky.length);
-      }
       ctx.fillStyle = planet.sky[offset][x];
       ctx.fillRect(x * 3, y * 3, 3, 3);
     }
   }
+};
+
+Viewport.prototype.shift = function (x, y) {
+  var subShift = function () {
+    if (this.shiftCount < 11) {
+      this.origin.x += x;
+      this.origin.y += y;
+      this.shiftCount += 1;
+    } else {
+      clearInterval(this.shiftInterval);
+    }
+    this.populateSquares();
+    this.game.render();
+  }.bind(this);
+  this.shiftCount = 0;
+  this.shiftInterval = setInterval(subShift, 32);
 };
 
 module.exports = Viewport;

@@ -104,6 +104,7 @@ Player.prototype.walk = function (x, y) {
       this.game.render();
     }
   }.bind(this);
+  this.checkIfMovingOutsideViewport(x, y);
   this.walkInterval = setInterval(animateExit, 32);
 };
 
@@ -116,6 +117,18 @@ Player.prototype.setDirectionalSprite = function (x, y, type) {
     this.sprite = this.sprites[type + 'Down'];
   } else if (y == -1) {
     this.sprite = this.sprites[type + 'Up'];
+  }
+};
+
+Player.prototype.checkIfMovingOutsideViewport = function (x, y) {
+  if (this.square.x + x < this.game.viewport.origin.x) {
+    this.game.viewport.shift(-1, 0);
+  } else if (this.square.x + x > this.game.viewport.origin.x + 11) {
+    this.game.viewport.shift(1, 0);
+  } else if (this.square.y + y < this.game.viewport.origin.y) {
+    this.game.viewport.shift(0, -1);
+  } else if (this.square.y + y > this.game.viewport.origin.y + 11) {
+    this.game.viewport.shift(0, 1);
   }
 };
 

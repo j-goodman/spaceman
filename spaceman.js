@@ -48,9 +48,9 @@
 	
 	// 1. REQUIRE DEPENDENCIES //
 	var Player = __webpack_require__(1);
-	var Planet = __webpack_require__(7);
-	var Square = __webpack_require__(8);
-	var Viewport = __webpack_require__(9);
+	var Planet = __webpack_require__(11);
+	var Square = __webpack_require__(12);
+	var Viewport = __webpack_require__(13);
 	var Game = {};
 	
 	// 2. INITIALIZE CANVAS //
@@ -66,7 +66,7 @@
 	  Game.planet = new Planet ();
 	  var spawnSquare = Game.planet.map[50][50];
 	  Game.player = new Player (Game, spawnSquare);
-	  Game.viewport = new Viewport (Game.planet, 45, 45);
+	  Game.viewport = new Viewport (Game, Game.planet, 45, 45);
 	  spawnSquare.content = Game.player;
 	};
 	
@@ -99,10 +99,10 @@
 	  standingUp: __webpack_require__(4),
 	  standingRight: __webpack_require__(5),
 	  standingLeft: __webpack_require__(6),
-	  walkingDown: __webpack_require__(10),
-	  walkingUp: __webpack_require__(11),
-	  walkingRight: __webpack_require__(12),
-	  walkingLeft: __webpack_require__(13),
+	  walkingDown: __webpack_require__(7),
+	  walkingUp: __webpack_require__(8),
+	  walkingRight: __webpack_require__(9),
+	  walkingLeft: __webpack_require__(10),
 	};
 	
 	var Player = function (GameObject, square) {
@@ -200,6 +200,7 @@
 	      this.game.render();
 	    }
 	  }.bind(this);
+	  this.checkIfMovingOutsideViewport(x, y);
 	  this.walkInterval = setInterval(animateExit, 32);
 	};
 	
@@ -212,6 +213,18 @@
 	    this.sprite = this.sprites[type + 'Down'];
 	  } else if (y == -1) {
 	    this.sprite = this.sprites[type + 'Up'];
+	  }
+	};
+	
+	Player.prototype.checkIfMovingOutsideViewport = function (x, y) {
+	  if (this.square.x + x < this.game.viewport.origin.x) {
+	    this.game.viewport.shift(-1, 0);
+	  } else if (this.square.x + x > this.game.viewport.origin.x + 11) {
+	    this.game.viewport.shift(1, 0);
+	  } else if (this.square.y + y < this.game.viewport.origin.y) {
+	    this.game.viewport.shift(0, -1);
+	  } else if (this.square.y + y > this.game.viewport.origin.y + 11) {
+	    this.game.viewport.shift(0, 1);
 	  }
 	};
 	
@@ -445,181 +458,6 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Square = __webpack_require__(8);
-	
-	var Planet = function () {
-	  this.map = [];
-	  this.time = 0;
-	  this.generate();
-	};
-	
-	Planet.prototype.generate = function () {
-	  var y; var x;
-	  var balancer = Math.round(Math.random()*255);
-	  this.dirtHues = {
-	    r: (50 + Math.round(Math.random()*195) + balancer * 2) / 3,
-	    g: (30 + Math.round(Math.random()*175) + balancer * 2) / 3,
-	    b: (50 + Math.round(Math.random()*195) + balancer * 2) / 3,
-	  };
-	  this.dirtColor = hex(this.dirtHues.r, this.dirtHues.g, this.dirtHues.b);
-	  for (y=0 ; y<144 ; y++) {
-	    this.map.push([]);
-	    for (x=0 ; x<144 ; x++) {
-	      this.map[y].push(new Square (x, y, this.dirtColor, this.map));
-	    }
-	  }
-	  this.skyHues = {
-	    r: Math.random()*2,
-	    g: Math.random()*1.8,
-	    b: Math.random()*2.2,
-	  };
-	  this.sky = this.generateSky();
-	};
-	
-	var hex = function (r, g, b) {
-	  // r, g, and b are integers between 0 and 255
-	  var i; var j;
-	  args = [r, g, b];
-	  for (j=0 ; j<3 ; j++) {
-	    if (args[j] > 255) {
-	      args[j] = 255;
-	    }
-	  colors = [
-	    Math.round(args[0]).toString(16),
-	    Math.round(args[1]).toString(16),
-	    Math.round(args[2]).toString(16),
-	  ];
-	  }
-	  for (i=0 ; i<3 ; i++) {
-	    if (colors[i].length < 2) {
-	      colors[i] = '0' + colors[i];
-	    }
-	  }
-	  var hexString = '#'+ colors.join('');
-	  return hexString;
-	};
-	
-	Planet.prototype.generateSky = function () {
-	  var sky = []; var x; var y;
-	  var red = 0; var green = 0; var blue = 0;
-	  var color = hex(red, green, blue);
-	  for (y=0 ; y<480 ; y++) {
-	    sky.push([]);
-	    if (y > 50 && y < 240) {
-	      red += this.skyHues.r;
-	      green += this.skyHues.g;
-	      blue += this.skyHues.b;
-	    } else if (y > 240 && y < 430) {
-	      red -= this.skyHues.r;
-	      green -= this.skyHues.g;
-	      blue -= this.skyHues.b;
-	    }
-	    color = hex(red, green, blue);
-	    for (x=0 ; x<240 ; x++) {
-	      sky[y].push(color);
-	    }
-	  }
-	  return sky;
-	};
-	
-	module.exports = Planet;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	var Square = function (x, y, dirtColor, map) {
-	  this.x = x;
-	  this.y = y;
-	  this.map = map;
-	  this.content = false;
-	  this.dirtColor = dirtColor;
-	};
-	
-	Square.prototype.renderEmpty = function (ctx, viewOrigin) {
-	  ctx.fillStyle = this.dirtColor;
-	  ctx.fillRect((this.x - viewOrigin.x) * 60, (this.y - viewOrigin.y) * 28 + 142, 60, 28);
-	};
-	
-	Square.prototype.renderContent = function (ctx, viewOrigin) {
-	  if (this.content.sprite) {
-	    this.content.sprite.draw({
-	      x: (this.x - viewOrigin.x) * 60 + (60 - this.content.sprite.width * 3 + this.content.offset.x) / 2,
-	      y: (this.y - viewOrigin.y) * 28 + 142 + 15 + this.content.offset.y
-	    }, ctx);
-	  }
-	};
-	
-	module.exports = Square;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	var Viewport = function (planet, x, y) {
-	  this.origin = {
-	    x: x,
-	    y: y,
-	  };
-	  this.planet = planet;
-	  this.squares = [];
-	  this.populateSquares();
-	};
-	
-	Viewport.prototype.populateSquares = function () {
-	  var x; var y;
-	  for (y=0 ; y<12 ; y++) {
-	    this.squares.push([]);
-	    for (x=0 ; x<12 ; x++) {
-	      this.squares[y].push(this.planet.map[this.origin.y+y][this.origin.x+x]);
-	    }
-	  }
-	};
-	
-	Viewport.prototype.render = function (ctx) {
-	  var x; var y; var i;
-	  var objectQueue = [];
-	  for (y=0 ; y<12 ; y++) {
-	    for (x=0 ; x<12 ; x++) {
-	      this.squares[y][x].renderEmpty(ctx, this.origin);
-	      if (this.squares[y][x].content) {
-	        objectQueue.push(this.squares[y][x]);
-	      }
-	    }
-	  }
-	  this.drawSky(ctx, this.planet);
-	  for (i=0 ; i<objectQueue.length ; i++) {
-	    objectQueue[i].renderContent(ctx, this.origin);
-	  }
-	};
-	
-	Viewport.prototype.drawSky = function (ctx, planet) {
-	  var offset;
-	  for (y=0 ; y<48 ; y++) {
-	    for (x=0 ; x<240 ; x++) {
-	      offset = y + planet.time;
-	      if (offset >= planet.sky.length) {
-	        offset -= planet.sky.length;
-	      }
-	      if (!planet.sky[offset]) {
-	        console.log('offset: ', offset);
-	        console.log('sky length: ', planet.sky.length);
-	      }
-	      ctx.fillStyle = planet.sky[offset][x];
-	      ctx.fillRect(x * 3, y * 3, 3, 3);
-	    }
-	  }
-	};
-	
-	module.exports = Viewport;
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var Sprite = __webpack_require__(3);
 	
 	var image = [
@@ -839,7 +677,7 @@
 
 
 /***/ },
-/* 11 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Sprite = __webpack_require__(3);
@@ -1061,7 +899,7 @@
 
 
 /***/ },
-/* 12 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Sprite = __webpack_require__(3);
@@ -1231,7 +1069,7 @@
 
 
 /***/ },
-/* 13 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Sprite = __webpack_require__(3);
@@ -1398,6 +1236,214 @@
 	var sprite = new Sprite (image);
 	
 	module.exports = sprite;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Square = __webpack_require__(12);
+	var Utils = __webpack_require__(14);
+	
+	var Planet = function () {
+	  this.map = [];
+	  this.time = 0;
+	  this.generate();
+	};
+	
+	Planet.prototype.generate = function () {
+	  var y; var x;
+	  var balancer = Math.round(Math.random()*255);
+	  this.dirtHues = {
+	    r: (50 + Math.round(Math.random()*195) + balancer * 2) / 3,
+	    g: (30 + Math.round(Math.random()*175) + balancer * 2) / 3,
+	    b: (50 + Math.round(Math.random()*195) + balancer * 2) / 3,
+	  };
+	  this.dirtColor = hex(this.dirtHues.r, this.dirtHues.g, this.dirtHues.b);
+	  for (y=0 ; y<144 ; y++) {
+	    this.map.push([]);
+	    for (x=0 ; x<144 ; x++) {
+	      this.map[y].push(new Square (x, y, this.dirtColor, this.map));
+	    }
+	  }
+	  this.skyHues = {
+	    r: Math.random()*2,
+	    g: Math.random()*1.8,
+	    b: Math.random()*2.2,
+	  };
+	  this.sky = this.generateSky();
+	};
+	
+	var hex = Utils.hex;
+	
+	Planet.prototype.generateSky = function () {
+	  var sky = []; var x; var y;
+	  var red = 0; var green = 0; var blue = 0;
+	  var color = hex(red, green, blue);
+	  for (y=0 ; y<480 ; y++) {
+	    sky.push([]);
+	    if (y > 50 && y < 240) {
+	      red += this.skyHues.r;
+	      green += this.skyHues.g;
+	      blue += this.skyHues.b;
+	    } else if (y > 240 && y < 430) {
+	      red -= this.skyHues.r;
+	      green -= this.skyHues.g;
+	      blue -= this.skyHues.b;
+	    }
+	    color = hex(red, green, blue);
+	    for (x=0 ; x<240 ; x++) {
+	      sky[y].push(color);
+	    }
+	  }
+	  return sky;
+	};
+	
+	module.exports = Planet;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Utils = __webpack_require__(14);
+	var hex = Utils.hex;
+	
+	var Square = function (x, y, dirtColor, map) {
+	  this.x = x;
+	  this.y = y;
+	  this.map = map;
+	  this.content = false;
+	  // this.dirtColor = dirtColor;
+	  r = 150;
+	  g = 50;
+	  b = 70;
+	  this.dirtColor = hex((Math.random()*255 + r*22)/23,( Math.random()*255 + g*22)/23, (Math.random()*255 + b*22)/23);
+	};
+	
+	Square.prototype.renderEmpty = function (ctx, viewOrigin) {
+	  ctx.fillStyle = this.dirtColor;
+	  ctx.fillRect((this.x - viewOrigin.x) * 60, (this.y - viewOrigin.y) * 28 + 142, 60, 28);
+	};
+	
+	Square.prototype.renderContent = function (ctx, viewOrigin) {
+	  if (this.content.sprite) {
+	    this.content.sprite.draw({
+	      x: (this.x - viewOrigin.x) * 60 + (60 - this.content.sprite.width * 3 + this.content.offset.x) / 2,
+	      y: (this.y - viewOrigin.y) * 28 + 142 + 15 + this.content.offset.y
+	    }, ctx);
+	  }
+	};
+	
+	module.exports = Square;
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	var Viewport = function (game, planet, x, y) {
+	  this.origin = {
+	    x: x,
+	    y: y,
+	  };
+	  this.game = game;
+	  this.planet = planet;
+	  this.squares = [];
+	  this.populateSquares();
+	};
+	
+	Viewport.prototype.populateSquares = function () {
+	  var x; var y;
+	  this.squares = [];
+	  for (y=0 ; y<12 ; y++) {
+	    this.squares.push([]);
+	    for (x=0 ; x<12 ; x++) {
+	      this.squares[y].push(this.planet.map[this.origin.y+y][this.origin.x+x]);
+	    }
+	  }
+	};
+	
+	Viewport.prototype.render = function (ctx) {
+	  var x; var y; var i;
+	  var objectQueue = [];
+	  for (y=0 ; y<12 ; y++) {
+	    for (x=0 ; x<12 ; x++) {
+	      this.squares[y][x].renderEmpty(ctx, this.origin);
+	      if (this.squares[y][x].content) {
+	        objectQueue.push(this.squares[y][x]);
+	      }
+	    }
+	  }
+	  this.drawSky(ctx, this.planet);
+	  for (i=0 ; i<objectQueue.length ; i++) {
+	    objectQueue[i].renderContent(ctx, this.origin);
+	  }
+	};
+	
+	Viewport.prototype.drawSky = function (ctx, planet) {
+	  var offset;
+	  for (y=0 ; y<48 ; y++) {
+	    for (x=0 ; x<240 ; x++) {
+	      offset = y + planet.time;
+	      if (offset >= planet.sky.length) {
+	        offset -= planet.sky.length;
+	      }
+	      ctx.fillStyle = planet.sky[offset][x];
+	      ctx.fillRect(x * 3, y * 3, 3, 3);
+	    }
+	  }
+	};
+	
+	Viewport.prototype.shift = function (x, y) {
+	  var subShift = function () {
+	    if (this.shiftCount < 11) {
+	      this.origin.x += x;
+	      this.origin.y += y;
+	      this.shiftCount += 1;
+	    } else {
+	      clearInterval(this.shiftInterval);
+	    }
+	    this.populateSquares();
+	    this.game.render();
+	  }.bind(this);
+	  this.shiftCount = 0;
+	  this.shiftInterval = setInterval(subShift, 32);
+	};
+	
+	module.exports = Viewport;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	Utils = {
+	  hex: function (r, g, b) {
+	    // r, g, and b are integers between 0 and 255
+	    var i; var j;
+	    args = [r, g, b];
+	    for (j=0 ; j<3 ; j++) {
+	      if (args[j] > 255) {
+	        args[j] = 255;
+	      }
+	    colors = [
+	      Math.round(args[0]).toString(16),
+	      Math.round(args[1]).toString(16),
+	      Math.round(args[2]).toString(16),
+	    ];
+	    }
+	    for (i=0 ; i<3 ; i++) {
+	      if (colors[i].length < 2) {
+	        colors[i] = '0' + colors[i];
+	      }
+	    }
+	    var hexString = '#'+ colors.join('');
+	    return hexString;
+	  },
+	};
+	
+	module.exports = Utils;
 
 
 /***/ }
