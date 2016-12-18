@@ -1,11 +1,19 @@
 var sprites = {
   standingDown: require('../sprites/player/standingDown'),
+  standingUp: require('../sprites/player/standingUp'),
+  standingRight: require('../sprites/player/standingRight'),
+  standingLeft: require('../sprites/player/standingLeft'),
+  walkingDown: require('../sprites/player/walkingDown'),
+  walkingUp: require('../sprites/player/walkingUp'),
+  walkingRight: require('../sprites/player/walkingRight'),
+  walkingLeft: require('../sprites/player/walkingLeft'),
 };
 
 var Player = function (GameObject, square) {
   this.game = GameObject;
   this.square = square;
-  this.sprite = sprites.standingDown;
+  this.sprites = sprites;
+  this.sprite = this.sprites.standingDown;
   this.leftPressed = false;
   this.upPressed = false;
   this.rightPressed = false;
@@ -53,11 +61,17 @@ Player.prototype.walk = function (x, y) {
   if (this.walking) {
     return null;
   }
+  this.setDirectionalSprite(x, y, 'walking');
   this.walking = true;
   this.squareExit = 0;
   this.squareEnter = 0;
   var animateExit = function () {
     this.squareExit += 1;
+    if (this.sprite.frame < this.sprite.image.length - 1) {
+      this.sprite.frame += 1;
+    } else {
+      this.sprite.frame = 0;
+    }
     this.offset.x += x*16;
     this.offset.y += y*4;
     this.game.render();
@@ -67,11 +81,16 @@ Player.prototype.walk = function (x, y) {
       this.offset.y = this.offset.y * -1;
       this.squareExit = 0;
       this.changeSquare(x, y);
-      this.walkInterval = setInterval(animateEnter, 24);
+      this.walkInterval = setInterval(animateEnter, 32);
     }
   }.bind(this);
   var animateEnter = function () {
     this.squareEnter += 1;
+    if (this.frame < this.sprite.image.length - 1) {
+      this.frame += 1;
+    } else {
+      this.frame = 0;
+    }
     this.offset.x += x*16;
     this.offset.y += y*4;
     this.game.render();
@@ -79,9 +98,51 @@ Player.prototype.walk = function (x, y) {
       clearInterval(this.walkInterval);
       this.offset.x = this.offset.y = 0;
       this.walking = false;
+      if (!this.checkIfStillWalking(x, y)) {
+        this.setDirectionalSprite(x, y, 'standing');
+      }
+      this.game.render();
     }
   }.bind(this);
-  this.walkInterval = setInterval(animateExit, 24);
+  this.walkInterval = setInterval(animateExit, 32);
+};
+
+Player.prototype.setDirectionalSprite = function (x, y, type) {
+  if (x == 1) {
+    this.sprite = this.sprites[type + 'Right'];
+  } else if (x == -1) {
+    this.sprite = this.sprites[type + 'Left'];
+  } else if (y == 1) {
+    this.sprite = this.sprites[type + 'Down'];
+  } else if (y == -1) {
+    this.sprite = this.sprites[type + 'Up'];
+  }
+};
+
+Player.prototype.checkIfStillWalking = function (x, y) {
+  var walking = false;
+  if (x == 1) {
+    if (this.rightPressed) {
+      this.walk(x, y);
+      walking = true;
+    }
+  } else if (x == -1) {
+    if (this.leftPressed) {
+      this.walk(x, y);
+      walking = true;
+    }
+  } else if (y == 1) {
+    if (this.downPressed) {
+      this.walk(x, y);
+      walking = true;
+    }
+  } else if (y == -1) {
+    if (this.topPressed) {
+      this.walk(x, y);
+      walking = true;
+    }
+  }
+  return walking;
 };
 
 Player.prototype.changeSquare = function (x, y) {

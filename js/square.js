@@ -8,9 +8,6 @@ var Square = function (x, y, dirtColor, map) {
 
 Square.prototype.renderEmpty = function (ctx, viewOrigin) {
   ctx.fillStyle = this.dirtColor;
-  if (this.content) {
-    ctx.fillStyle = '#fff';
-  }
   ctx.fillRect((this.x - viewOrigin.x) * 60, (this.y - viewOrigin.y) * 28 + 142, 60, 28);
 };
 
