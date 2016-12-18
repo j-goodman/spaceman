@@ -2,6 +2,7 @@ console.log("Enter, spaceman.");
 
 // 1. REQUIRE DEPENDENCIES //
 var Player = require('./player.js');
+var Spaceship = require('./spaceship.js');
 var Planet = require('./planet.js');
 var Square = require('./square.js');
 var Viewport = require('./viewport.js');
@@ -21,6 +22,8 @@ var setupWorld = function () {
   var spawnSquare = Game.planet.map[10][10];
   Game.player = new Player (Game, spawnSquare);
   Game.viewport = new Viewport (Game, Game.planet, 0, 0);
+  var spaceshipSquare = Game.planet.map[5][6];
+  var spaceship = new Spaceship (spaceshipSquare);
   spawnSquare.content = Game.player;
 };
 

@@ -9,6 +9,8 @@ var Planet = function () {
 
 Planet.prototype.generate = function () {
   var y; var x;
+
+  // Add dirt and squares.
   var balancer = Math.round(Math.random()*255);
   this.dirtHues = {
     r: (50 + Math.round(Math.random()*195) + balancer * 2) / 3,
@@ -22,10 +24,12 @@ Planet.prototype.generate = function () {
       this.map[y].push(new Square (x, y, this.dirtHues, this.map));
     }
   }
+
+  // Color sky.
   this.skyHues = {
-    r: Math.random()*2,
-    g: Math.random()*1.8,
-    b: Math.random()*2.2,
+    r: Math.random() * 2,
+    g: Math.random() * 1.8,
+    b: Math.random() * 2.2,
   };
   this.sky = this.generateSky();
 };

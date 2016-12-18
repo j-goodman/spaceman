@@ -23,6 +23,7 @@ var Player = function (GameObject, square) {
     x: 0,
     y: 0,
   };
+  this.name = "Player";
   this.setupKeyControls();
 };
 

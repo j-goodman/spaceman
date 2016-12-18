@@ -20,6 +20,9 @@ Square.prototype.renderEmpty = function (ctx, screenPos) {
 };
 
 Square.prototype.renderContent = function (ctx, screenPos) {
+  if (!this.content.offset) {
+    this.content.offset = {x: 0, y: 0};
+  }
   if (this.content.sprite) {
     this.content.sprite.draw({
       x: (screenPos.x) * 60 + (60 - this.content.sprite.width * 3 + this.content.offset.x) / 2,
