@@ -49,8 +49,8 @@
 	// 1. REQUIRE DEPENDENCIES //
 	var Player = __webpack_require__(1);
 	var Spaceship = __webpack_require__(11);
-	var Planet = __webpack_require__(13);
-	var Square = __webpack_require__(14);
+	var Planet = __webpack_require__(14);
+	var Square = __webpack_require__(15);
 	var Viewport = __webpack_require__(16);
 	var Game = {};
 	
@@ -1255,7 +1255,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var sprite = __webpack_require__(12);
-	var Utils = __webpack_require__(15);
+	var Utils = __webpack_require__(13);
 	var hex = Utils.hex;
 	
 	var Spaceship = function (leftFootSquare, planet) {
@@ -1263,9 +1263,9 @@
 	  this.sprite.colorA = hex(planet.dirtHues.r - 50, planet.dirtHues.g - 50, planet.dirtHues.b - 50 );
 	  this.sprite.colorB = hex(planet.dirtHues.r - 20, planet.dirtHues.g - 20, planet.dirtHues.b - 20 );
 	  this.sprite.colorC = hex(
-	    (planet.dirtHues.r + 187 * 2) / 3,
-	    (planet.dirtHues.g + 102 * 2) / 3,
-	    (planet.dirtHues.b + 102 * 2) / 3
+	    (planet.dirtHues.r + 187 * 1.5) / 2.5,
+	    (planet.dirtHues.g + 102 * 1.5) / 2.5,
+	    (planet.dirtHues.b + 102 * 1.5) / 2.5
 	  );
 	  this.square = leftFootSquare;
 	  this.square.content = this;
@@ -1331,10 +1331,42 @@
 
 /***/ },
 /* 13 */
+/***/ function(module, exports) {
+
+	Utils = {
+	  hex: function (r, g, b) {
+	    // r, g, and b are integers between 0 and 255
+	    var i; var j;
+	    args = [r, g, b];
+	    for (j=0 ; j<3 ; j++) {
+	      if (args[j] > 255) {
+	        args[j] = 255;
+	      }
+	    colors = [
+	      Math.round(args[0]).toString(16),
+	      Math.round(args[1]).toString(16),
+	      Math.round(args[2]).toString(16),
+	    ];
+	    }
+	    for (i=0 ; i<3 ; i++) {
+	      if (colors[i].length < 2) {
+	        colors[i] = '0' + colors[i];
+	      }
+	    }
+	    var hexString = '#'+ colors.join('');
+	    return hexString;
+	  },
+	};
+	
+	module.exports = Utils;
+
+
+/***/ },
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Square = __webpack_require__(14);
-	var Utils = __webpack_require__(15);
+	var Square = __webpack_require__(15);
+	var Utils = __webpack_require__(13);
 	
 	var Planet = function () {
 	  this.map = [];
@@ -1398,10 +1430,10 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Utils = __webpack_require__(15);
+	var Utils = __webpack_require__(13);
 	var hex = Utils.hex;
 	
 	var Square = function (x, y, dirtHues, map) {
@@ -1441,38 +1473,6 @@
 	};
 	
 	module.exports = Square;
-
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	Utils = {
-	  hex: function (r, g, b) {
-	    // r, g, and b are integers between 0 and 255
-	    var i; var j;
-	    args = [r, g, b];
-	    for (j=0 ; j<3 ; j++) {
-	      if (args[j] > 255) {
-	        args[j] = 255;
-	      }
-	    colors = [
-	      Math.round(args[0]).toString(16),
-	      Math.round(args[1]).toString(16),
-	      Math.round(args[2]).toString(16),
-	    ];
-	    }
-	    for (i=0 ; i<3 ; i++) {
-	      if (colors[i].length < 2) {
-	        colors[i] = '0' + colors[i];
-	      }
-	    }
-	    var hexString = '#'+ colors.join('');
-	    return hexString;
-	  },
-	};
-	
-	module.exports = Utils;
 
 
 /***/ },
