@@ -14,7 +14,15 @@ Sprite.prototype.draw = function (leftFootPos, ctx) {
   for (y=0 ; y<this.height ; y++) {
     for (x=0 ; x<this.width ; x++) {
       if (this.image[this.frame][y][x]) {
-        ctx.fillStyle = this.image[this.frame][y][x];
+        if (this.image[this.frame][y][x] === "clrA") {
+          ctx.fillStyle = this.colorA;
+        } else if (this.image[this.frame][y][x] === "clrB") {
+          ctx.fillStyle = this.colorB;
+        } else if (this.image[this.frame][y][x] === "clrC") {
+          ctx.fillStyle = this.colorC;
+        } else {
+          ctx.fillStyle = this.image[this.frame][y][x];
+        }
         ctx.fillRect(topLeftPos.x + x * pixel, topLeftPos.y + y * pixel, pixel, pixel);
       }
     }

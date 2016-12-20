@@ -23,7 +23,7 @@ var setupWorld = function () {
   Game.player = new Player (Game, spawnSquare);
   Game.viewport = new Viewport (Game, Game.planet, 0, 0);
   var spaceshipSquare = Game.planet.map[5][6];
-  var spaceship = new Spaceship (spaceshipSquare);
+  var spaceship = new Spaceship (spaceshipSquare, Game.planet);
   spawnSquare.content = Game.player;
 };
 
