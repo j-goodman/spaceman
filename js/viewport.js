@@ -6,6 +6,8 @@ var Viewport = function (game, planet, x, y) {
   this.game = game;
   this.planet = planet;
   this.squares = [];
+  this.upperFringe = [];
+  this.lowerFringe = [];
   this.populateSquares();
 };
 
@@ -18,11 +20,28 @@ Viewport.prototype.populateSquares = function () {
       this.squares[y].push(this.planet.map[0][0].fetch(this.origin.x + x, this.origin.y + y));
     }
   }
+  this.populateFringes();
+};
+
+Viewport.prototype.populateFringes = function () {
+  this.upperFringe = [];
+  this.lowerFringe = [];
+  var x; var y;
+  for (y=0 ; y<5 ; y++) {
+    this.upperFringe.push([]);
+    this.lowerFringe.push([]);
+    for (x=0 ; x<12 ; x++) {
+      this.upperFringe[y].push(this.planet.map[0][0].fetch(this.origin.x + x, this.origin.y - y));
+      this.lowerFringe[y].push(this.planet.map[0][0].fetch(this.origin.x + x, this.origin.y + 12 + y));
+    }
+  }
 };
 
 Viewport.prototype.render = function (ctx) {
   var x; var y; var i;
   var objectQueue = [];
+  this.drawSky(ctx, this.planet);
+  this.renderUpperFringe();
   for (y=0 ; y<12 ; y++) {
     for (x=0 ; x<12 ; x++) {
       this.squares[y][x].renderEmpty(ctx, {
@@ -38,12 +57,40 @@ Viewport.prototype.render = function (ctx) {
       }
     }
   }
-  this.drawSky(ctx, this.planet);
+  this.renderLowerFringe();
   for (i=0 ; i<objectQueue.length ; i++) {
     objectQueue[i].square.renderContent(ctx, {
       x: objectQueue[i].x,
       y: objectQueue[i].y,
     });
+  }
+};
+
+Viewport.prototype.renderUpperFringe = function () {
+  var x; var y;
+  for (y=0 ; y<5 ; y++) {
+    for (x=0 ; x<12 ; x++) {
+      if (this.upperFringe[y][x].content) {
+        this.upperFringe[y][x].renderContent(ctx, {
+          x: x,
+          y: y,
+        });
+      }
+    }
+  }
+};
+
+Viewport.prototype.renderLowerFringe = function () {
+  var x; var y;
+  for (y=0 ; y<5 ; y++) {
+    for (x=0 ; x<12 ; x++) {
+      if (this.lowerFringe[y][x].content) {
+        this.lowerFringe[y][x].renderContent(ctx, {
+          x: x,
+          y: y + 12,
+        });
+      }
+    }
   }
 };
 

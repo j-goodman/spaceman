@@ -161,6 +161,7 @@
 	  if (this.walking) {
 	    return null;
 	  }
+	  this.bounced = false;
 	  this.setDirectionalSprite(x, y, 'walking');
 	  this.walking = true;
 	  this.squareExit = 0;
@@ -177,8 +178,6 @@
 	    this.game.render();
 	    if (this.squareExit > 3) {
 	      clearInterval(this.walkInterval);
-	      this.offset.x = this.offset.x * -1;
-	      this.offset.y = this.offset.y * -1;
 	      this.squareExit = 0;
 	      this.changeSquare(x, y);
 	      this.walkInterval = setInterval(animateEnter, 32);
@@ -191,8 +190,13 @@
 	    } else {
 	      this.frame = 0;
 	    }
-	    this.offset.x += x*16;
-	    this.offset.y += y*4;
+	    if (!this.bounced) {
+	      this.offset.x += x*16;
+	      this.offset.y += y*4;
+	    } else {
+	      this.offset.x -= x*16;
+	      this.offset.y -= y*4;
+	    }
 	    this.game.render();
 	    if (this.squareEnter > 3) {
 	      clearInterval(this.walkInterval);
@@ -259,10 +263,19 @@
 	};
 	
 	Player.prototype.changeSquare = function (x, y) {
-	  this.square.content = false;
-	  this.square.fetch(this.square.x + x, this.square.y + y).content = this;
-	  this.square = this.square.fetch(this.square.x + x, this.square.y + y);
+	  var moved = false;
+	  if (!this.square.fetch(this.square.x + x, this.square.y + y).content) {
+	    this.offset.x = this.offset.x * -1;
+	    this.offset.y = this.offset.y * -1;
+	    this.square.content = false;
+	    this.square.fetch(this.square.x + x, this.square.y + y).content = this;
+	    this.square = this.square.fetch(this.square.x + x, this.square.y + y);
+	    moved = true;
+	  } else {
+	    this.bounced = true;
+	  }
 	  this.game.advance();
+	  return moved;
 	};
 	
 	module.exports = Player;
@@ -317,14 +330,16 @@
 	  this.height = this.image[0].length;
 	  this.width = this.image[0][0].length;
 	  this.frame = 0;
+	  this.displayHeight = Math.ceil(this.height / 8);
 	};
 	
-	Sprite.prototype.draw = function (leftFootPos, ctx) {
-	  var x; var y; var pixel = 3;
+	Sprite.prototype.draw = function (leftFootSquare, leftFootPos, ctx) {
+	  var x; var y; var i; var pixel = 3;
 	  var topLeftPos = {
 	    x: leftFootPos.x,
 	    y: leftFootPos.y - this.height * pixel,
 	  };
+	  var square = leftFootSquare;
 	  for (y=0 ; y<this.height ; y++) {
 	    for (x=0 ; x<this.width ; x++) {
 	      if (this.image[this.frame][y][x]) {
@@ -1259,6 +1274,7 @@
 	var hex = Utils.hex;
 	
 	var Spaceship = function (leftFootSquare, planet) {
+	  var i;
 	  this.sprite = sprite;
 	  this.sprite.colorA = hex(planet.dirtHues.r - 50, planet.dirtHues.g - 50, planet.dirtHues.b - 50 );
 	  this.sprite.colorB = hex(planet.dirtHues.r - 20, planet.dirtHues.g - 20, planet.dirtHues.b - 20 );
@@ -1269,6 +1285,17 @@
 	  );
 	  this.square = leftFootSquare;
 	  this.square.content = this;
+	  var blocks = [];
+	  blocks.push(this.square.fetch(this.square.x, this.square.y));
+	  blocks.push(this.square.fetch(this.square.x, this.square.y - 1));
+	  blocks.push(this.square.fetch(this.square.x - 1, this.square.y));
+	  blocks.push(this.square.fetch(this.square.x + 1, this.square.y - 1));
+	  blocks.push(this.square.fetch(this.square.x - 1, this.square.y - 1));
+	  for (i=0 ; i<blocks.length ; i++) {
+	    if (!blocks[i].content) {
+	      blocks[i].content = "block";
+	    }
+	  }
 	  this.name = "Spaceship";
 	};
 	
@@ -1464,7 +1491,7 @@
 	    this.content.offset = {x: 0, y: 0};
 	  }
 	  if (this.content.sprite) {
-	    this.content.sprite.draw({
+	    this.content.sprite.draw(this, {
 	      x: (screenPos.x) * 60 + (60 - this.content.sprite.width * 3 + this.content.offset.x) / 2,
 	      y: (screenPos.y) * 28 + 142 + 15 + this.content.offset.y
 	    }, ctx);
@@ -1492,6 +1519,8 @@
 	  this.game = game;
 	  this.planet = planet;
 	  this.squares = [];
+	  this.upperFringe = [];
+	  this.lowerFringe = [];
 	  this.populateSquares();
 	};
 	
@@ -1504,11 +1533,28 @@
 	      this.squares[y].push(this.planet.map[0][0].fetch(this.origin.x + x, this.origin.y + y));
 	    }
 	  }
+	  this.populateFringes();
+	};
+	
+	Viewport.prototype.populateFringes = function () {
+	  this.upperFringe = [];
+	  this.lowerFringe = [];
+	  var x; var y;
+	  for (y=0 ; y<5 ; y++) {
+	    this.upperFringe.push([]);
+	    this.lowerFringe.push([]);
+	    for (x=0 ; x<12 ; x++) {
+	      this.upperFringe[y].push(this.planet.map[0][0].fetch(this.origin.x + x, this.origin.y - y));
+	      this.lowerFringe[y].push(this.planet.map[0][0].fetch(this.origin.x + x, this.origin.y + 12 + y));
+	    }
+	  }
 	};
 	
 	Viewport.prototype.render = function (ctx) {
 	  var x; var y; var i;
 	  var objectQueue = [];
+	  this.drawSky(ctx, this.planet);
+	  this.renderUpperFringe();
 	  for (y=0 ; y<12 ; y++) {
 	    for (x=0 ; x<12 ; x++) {
 	      this.squares[y][x].renderEmpty(ctx, {
@@ -1524,12 +1570,40 @@
 	      }
 	    }
 	  }
-	  this.drawSky(ctx, this.planet);
+	  this.renderLowerFringe();
 	  for (i=0 ; i<objectQueue.length ; i++) {
 	    objectQueue[i].square.renderContent(ctx, {
 	      x: objectQueue[i].x,
 	      y: objectQueue[i].y,
 	    });
+	  }
+	};
+	
+	Viewport.prototype.renderUpperFringe = function () {
+	  var x; var y;
+	  for (y=0 ; y<5 ; y++) {
+	    for (x=0 ; x<12 ; x++) {
+	      if (this.upperFringe[y][x].content) {
+	        this.upperFringe[y][x].renderContent(ctx, {
+	          x: x,
+	          y: y,
+	        });
+	      }
+	    }
+	  }
+	};
+	
+	Viewport.prototype.renderLowerFringe = function () {
+	  var x; var y;
+	  for (y=0 ; y<5 ; y++) {
+	    for (x=0 ; x<12 ; x++) {
+	      if (this.lowerFringe[y][x].content) {
+	        this.lowerFringe[y][x].renderContent(ctx, {
+	          x: x,
+	          y: y + 12,
+	        });
+	      }
+	    }
 	  }
 	};
 	

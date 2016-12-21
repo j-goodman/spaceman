@@ -62,6 +62,7 @@ Player.prototype.walk = function (x, y) {
   if (this.walking) {
     return null;
   }
+  this.bounced = false;
   this.setDirectionalSprite(x, y, 'walking');
   this.walking = true;
   this.squareExit = 0;
@@ -78,8 +79,6 @@ Player.prototype.walk = function (x, y) {
     this.game.render();
     if (this.squareExit > 3) {
       clearInterval(this.walkInterval);
-      this.offset.x = this.offset.x * -1;
-      this.offset.y = this.offset.y * -1;
       this.squareExit = 0;
       this.changeSquare(x, y);
       this.walkInterval = setInterval(animateEnter, 32);
@@ -92,8 +91,13 @@ Player.prototype.walk = function (x, y) {
     } else {
       this.frame = 0;
     }
-    this.offset.x += x*16;
-    this.offset.y += y*4;
+    if (!this.bounced) {
+      this.offset.x += x*16;
+      this.offset.y += y*4;
+    } else {
+      this.offset.x -= x*16;
+      this.offset.y -= y*4;
+    }
     this.game.render();
     if (this.squareEnter > 3) {
       clearInterval(this.walkInterval);
@@ -160,10 +164,19 @@ Player.prototype.checkIfStillWalking = function (x, y) {
 };
 
 Player.prototype.changeSquare = function (x, y) {
-  this.square.content = false;
-  this.square.fetch(this.square.x + x, this.square.y + y).content = this;
-  this.square = this.square.fetch(this.square.x + x, this.square.y + y);
+  var moved = false;
+  if (!this.square.fetch(this.square.x + x, this.square.y + y).content) {
+    this.offset.x = this.offset.x * -1;
+    this.offset.y = this.offset.y * -1;
+    this.square.content = false;
+    this.square.fetch(this.square.x + x, this.square.y + y).content = this;
+    this.square = this.square.fetch(this.square.x + x, this.square.y + y);
+    moved = true;
+  } else {
+    this.bounced = true;
+  }
   this.game.advance();
+  return moved;
 };
 
 module.exports = Player;
