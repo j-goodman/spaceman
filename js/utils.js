@@ -19,7 +19,11 @@ Utils = {
       }
     }
     var hexString = '#'+ colors.join('');
-    return hexString;
+    if (hexString.slice(0,1) == "#" && (hexString.length == 4 || hexString.length == 7)) {
+      return hexString;
+    } else {
+      return "#666";
+    }
   },
 };
 
