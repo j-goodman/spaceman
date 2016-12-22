@@ -49,10 +49,10 @@
 	// 1. REQUIRE DEPENDENCIES //
 	var Player = __webpack_require__(1);
 	var Spaceship = __webpack_require__(11);
-	var Rock = __webpack_require__(17);
-	var Planet = __webpack_require__(14);
-	var Square = __webpack_require__(15);
-	var Viewport = __webpack_require__(16);
+	var Rock = __webpack_require__(14);
+	var Planet = __webpack_require__(16);
+	var Square = __webpack_require__(17);
+	var Viewport = __webpack_require__(18);
 	var Game = {};
 	
 	// 2. INITIALIZE CANVAS //
@@ -1395,7 +1395,126 @@
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Square = __webpack_require__(15);
+	var Sprite = __webpack_require__(3);
+	var Utils = __webpack_require__(13);
+	
+	var sprite = __webpack_require__(15);
+	
+	var hex = Utils.hex;
+	
+	var Rock = function (square, masterRock) {
+	  this.square = square;
+	  square.content = this;
+	  this.height = Math.floor(Math.random() * 2) ?
+	    Math.round(masterRock.height / masterRock.uniformity):
+	    Math.round(masterRock.height * masterRock.uniformity);
+	  this.outlineColor = hex(
+	    masterRock.outlineHues.r,
+	    masterRock.outlineHues.g,
+	    masterRock.outlineHues.b
+	  );
+	  this.mainColor = hex(
+	    masterRock.mainHues.r + Math.random() * 60 - 30,
+	    masterRock.mainHues.g + Math.random() * 60 - 30,
+	    masterRock.mainHues.b + Math.random() * 60 - 30
+	  );
+	  this.secondColor = hex(
+	    masterRock.secondHues.r + Math.random() * 60 - 30,
+	    masterRock.secondHues.g + Math.random() * 60 - 30,
+	    masterRock.secondHues.b + Math.random() * 60 - 30
+	  );
+	  // this.sprite = this.generateSprite(masterRock);
+	  this.sprite = sprite;
+	  sprite.colorA = this.outlineColor;
+	  sprite.colorB = this.mainColor;
+	  sprite.colorC = this.secondColor;
+	};
+	
+	// Rock.prototype.generateSprite = function (masterRock) {
+	//   var image = []; var brush; var x; var y;
+	//   for (y=0 ; y<this.height ; y++) {
+	//     image.push([]);
+	//     for (x=0 ; x<20 ; x++) {
+	//       image[y].push("");
+	//     }
+	//   }
+	//   var leftBound = 1; var rightBound = 19;
+	//   for (y=this.height-1 ; y>=0 ; y--) {
+	//     image[y][leftBound] = this.outlineColor;
+	//     brush = leftBound + 1;
+	//     while (brush !== rightBound) {
+	//       if (Math.floor(Math.random() * 6)) {
+	//         image[y][brush] = this.mainColor;
+	//       } else {
+	//         image[y][brush] = this.secondColor;
+	//       }
+	//       brush += 1;
+	//     }
+	//     image[y][brush] = this.outlineColor;
+	//     leftBound += Math.round(Math.random() * 3 - 1.5);
+	//     rightBound += Math.round(Math.random() * 3 - 1.5);
+	//     if (leftBound < 0) { leftBound = 1; }
+	//     if (rightBound > 20) { rightBound = 19; }
+	//     if (leftBound > rightBound) { leftBound = rightBound - 1; }
+	//     if (rightBound < leftBound) { rightBound = leftBound + 1; }
+	//   }
+	//   return new Sprite ([image]);
+	// };
+	
+	module.exports = Rock;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Sprite = __webpack_require__(3);
+	
+	var image = [
+	[
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,"clrA","clrA","clrA","clrA",""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,"clrA","clrB","clrB","clrB","clrB","clrA","clrA",""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,"clrA","clrA","clrA","clrB","clrB","clrB","clrC","clrB","clrA","clrA",""/**/,""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,"clrA","clrC","clrC","clrC","clrA","clrA","clrB","clrB","clrB","clrB","clrC","clrA",""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,"clrA","clrC","clrB","clrC","clrC","clrC","clrA","clrA","clrB","clrB","clrB","clrB","clrA",""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,"clrA","clrC","clrC","clrC","clrC","clrB","clrC","clrC","clrC","clrA","clrA","clrB","clrB","clrA",""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,"clrA","clrC","clrB","clrC","clrC","clrC","clrC","clrC","clrC","clrA","clrB","clrA","clrA","clrA",""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,"clrA","clrC","clrC","clrC","clrC","clrC","clrC","clrC","clrA","clrB","clrB","clrB","clrB","clrA",""/**/,""/**/,""/**/],
+	[""/**/,""/**/,"clrA","clrC","clrC","clrC","clrC","clrC","clrC","clrA","clrA","clrB","clrB","clrC","clrB","clrB","clrA",""/**/,""/**/,""/**/],
+	[""/**/,""/**/,"clrA","clrC","clrC","clrC","clrC","clrC","clrA","clrB","clrB","clrB","clrB","clrB","clrB","clrA","clrA",""/**/,""/**/,""/**/],
+	[""/**/,""/**/,"clrA","clrC","clrC","clrA","clrA","clrA","clrB","clrB","clrB","clrB","clrB","clrA","clrA","clrC","clrC","clrA",""/**/,""/**/],
+	[""/**/,"clrA","clrB","clrA","clrA","clrB","clrB","clrB","clrB","clrB","clrB","clrB","clrA","clrC","clrC","clrC","clrC","clrA",""/**/,""/**/],
+	[""/**/,"clrA","clrB","clrB","clrB","clrB","clrB","clrB","clrB","clrB","clrB","clrA","clrC","clrC","clrC","clrC","clrC","clrA",""/**/,""/**/],
+	[""/**/,"clrA","clrB","clrB","clrB","clrB","clrB","clrB","clrB","clrB","clrA","clrC","clrC","clrC","clrC","clrC","clrC","clrA",""/**/,""/**/],
+	[""/**/,"clrA","clrB","clrC","clrB","clrB","clrB","clrC","clrB","clrA","clrC","clrC","clrC","clrC","clrC","clrC","clrC","clrC","clrA",""/**/],
+	["clrA","clrB","clrB","clrB","clrB","clrB","clrB","clrB","clrB","clrA","clrC","clrC","clrC","clrC","clrC","clrC","clrB","clrC","clrA",""/**/],
+	["clrA","clrB","clrB","clrB","clrB","clrC","clrB","clrB","clrB","clrA","clrC","clrC","clrC","clrC","clrC","clrC","clrC","clrC","clrA",""/**/],
+	["clrA","clrB","clrC","clrB","clrB","clrB","clrB","clrB","clrB","clrA","clrC","clrC","clrB","clrC","clrC","clrB","clrC","clrC","clrA",""/**/],
+	["clrA","clrB","clrB","clrC","clrB","clrB","clrB","clrC","clrB","clrB","clrA","clrC","clrC","clrC","clrC","clrC","clrC","clrC","clrC","clrA"],
+	["clrA","clrB","clrB","clrB","clrB","clrC","clrB","clrB","clrB","clrB","clrA","clrC","clrC","clrB","clrC","clrC","clrC","clrB","clrC","clrA"],
+	[""/**/,"clrA","clrA","clrB","clrB","clrB","clrB","clrC","clrB","clrB","clrA","clrC","clrC","clrC","clrC","clrC","clrB","clrC","clrC","clrA"],
+	[""/**/,""/**/,""/**/,"clrA","clrA","clrB","clrB","clrB","clrC","clrB","clrA","clrC","clrC","clrC","clrB","clrC","clrC","clrC","clrC","clrA"],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,"clrA","clrA","clrB","clrB","clrB","clrB","clrA","clrC","clrB","clrC","clrC","clrC","clrA","clrA",""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,"clrA","clrA","clrB","clrB","clrA","clrC","clrC","clrC","clrA","clrA",""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,"clrA","clrA","clrA","clrC","clrA","clrA",""/**/,""/**/,""/**/,""/**/,""/**/],
+	[""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,"clrA","clrA",""/**/,""/**/,""/**/,""/**/,""/**/,""/**/,""/**/]
+	]
+	];
+	
+	var sprite = new Sprite (image);
+	
+	module.exports = sprite;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Square = __webpack_require__(17);
 	var Utils = __webpack_require__(13);
 	
 	var Planet = function () {
@@ -1432,22 +1551,22 @@
 	
 	  // Design rocks.
 	  this.rocks = {
-	    height: 12 + Math.random() * 5 - 2.5,
-	    uniformity: 1.3 + Math.random() * 0.5 - 0.25,
+	    // height: 12 + Math.random() * 5 - 2.5,
+	    // uniformity: 1.3 + Math.random() * 0.5 - 0.25,
 	    outlineHues: {
-	      r: this.dirtHues.r + Math.random() * 30 - 90,
-	      g: this.dirtHues.g + Math.random() * 30 - 90,
-	      b: this.dirtHues.b + Math.random() * 30 - 90,
+	      r: this.dirtHues.r - 70,
+	      g: this.dirtHues.g - 70,
+	      b: this.dirtHues.b - 70,
 	    },
 	    mainHues: {
-	      r: this.dirtHues.r + Math.random() * 80 - 40,
-	      g: this.dirtHues.g + Math.random() * 80 - 40,
-	      b: this.dirtHues.b + Math.random() * 80 - 40,
+	      r: this.dirtHues.r - 40,
+	      g: this.dirtHues.g - 40,
+	      b: this.dirtHues.b - 40,
 	    },
 	    secondHues: {
-	      r: this.dirtHues.r + Math.random() * 50 - 25,
-	      g: this.dirtHues.g + Math.random() * 50 - 25,
-	      b: this.dirtHues.b + Math.random() * 50 - 25,
+	      r: this.dirtHues.r - 30,
+	      g: this.dirtHues.g - 30,
+	      b: this.dirtHues.b - 30,
 	    },
 	  };
 	
@@ -1482,7 +1601,7 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Utils = __webpack_require__(13);
@@ -1528,7 +1647,7 @@
 
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports) {
 
 	var Viewport = function (game, planet, x, y) {
@@ -1671,73 +1790,6 @@
 	};
 	
 	module.exports = Viewport;
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Sprite = __webpack_require__(3);
-	var Utils = __webpack_require__(13);
-	
-	var hex = Utils.hex;
-	
-	var Rock = function (square, masterRock) {
-	  this.square = square;
-	  square.content = this;
-	  this.height = Math.floor(Math.random() * 2) ?
-	    Math.round(masterRock.height / masterRock.uniformity):
-	    Math.round(masterRock.height * masterRock.uniformity);
-	  this.outlineColor = hex(
-	    masterRock.outlineHues.r,
-	    masterRock.outlineHues.g,
-	    masterRock.outlineHues.b
-	  );
-	  this.mainColor = hex(
-	    masterRock.mainHues.r,
-	    masterRock.mainHues.g,
-	    masterRock.mainHues.b
-	  );
-	  this.secondColor = hex(
-	    masterRock.secondHues.r,
-	    masterRock.secondHues.g,
-	    masterRock.secondHues.b
-	  );
-	  this.sprite = this.generateSprite(masterRock);
-	};
-	
-	Rock.prototype.generateSprite = function (masterRock) {
-	  var image = []; var brush; var x; var y;
-	  for (y=0 ; y<this.height ; y++) {
-	    image.push([]);
-	    for (x=0 ; x<20 ; x++) {
-	      image[y].push("");
-	    }
-	  }
-	  var leftBound = 1; var rightBound = 19;
-	  for (y=this.height-1 ; y>=0 ; y--) {
-	    image[y][leftBound] = this.outlineColor;
-	    brush = leftBound + 1;
-	    while (brush !== rightBound) {
-	      if (Math.floor(Math.random() * 6)) {
-	        image[y][brush] = this.mainColor;
-	      } else {
-	        image[y][brush] = this.secondColor;
-	      }
-	      brush += 1;
-	    }
-	    image[y][brush] = this.outlineColor;
-	    leftBound += Math.round(Math.random() * 3 - 1.5);
-	    rightBound += Math.round(Math.random() * 3 - 1.5);
-	    if (leftBound < 0) { leftBound = 1; }
-	    if (rightBound > 20) { rightBound = 19; }
-	    if (leftBound > rightBound) { leftBound = rightBound - 1; }
-	    if (rightBound < leftBound) { rightBound = leftBound + 1; }
-	  }
-	  return new Sprite ([image]);
-	};
-	
-	module.exports = Rock;
 
 
 /***/ }

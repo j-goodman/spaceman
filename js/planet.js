@@ -35,22 +35,22 @@ Planet.prototype.generate = function () {
 
   // Design rocks.
   this.rocks = {
-    height: 12 + Math.random() * 5 - 2.5,
-    uniformity: 1.3 + Math.random() * 0.5 - 0.25,
+    // height: 12 + Math.random() * 5 - 2.5,
+    // uniformity: 1.3 + Math.random() * 0.5 - 0.25,
     outlineHues: {
-      r: this.dirtHues.r + Math.random() * 30 - 90,
-      g: this.dirtHues.g + Math.random() * 30 - 90,
-      b: this.dirtHues.b + Math.random() * 30 - 90,
+      r: this.dirtHues.r - 70,
+      g: this.dirtHues.g - 70,
+      b: this.dirtHues.b - 70,
     },
     mainHues: {
-      r: this.dirtHues.r + Math.random() * 80 - 40,
-      g: this.dirtHues.g + Math.random() * 80 - 40,
-      b: this.dirtHues.b + Math.random() * 80 - 40,
+      r: this.dirtHues.r - 40,
+      g: this.dirtHues.g - 40,
+      b: this.dirtHues.b - 40,
     },
     secondHues: {
-      r: this.dirtHues.r + Math.random() * 50 - 25,
-      g: this.dirtHues.g + Math.random() * 50 - 25,
-      b: this.dirtHues.b + Math.random() * 50 - 25,
+      r: this.dirtHues.r - 30,
+      g: this.dirtHues.g - 30,
+      b: this.dirtHues.b - 30,
     },
   };
 
