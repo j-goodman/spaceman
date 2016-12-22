@@ -49,6 +49,7 @@
 	// 1. REQUIRE DEPENDENCIES //
 	var Player = __webpack_require__(1);
 	var Spaceship = __webpack_require__(11);
+	var Rock = __webpack_require__(17);
 	var Planet = __webpack_require__(14);
 	var Square = __webpack_require__(15);
 	var Viewport = __webpack_require__(16);
@@ -70,6 +71,11 @@
 	  Game.viewport = new Viewport (Game, Game.planet, 0, 0);
 	  var spaceshipSquare = Game.planet.map[5][6];
 	  var spaceship = new Spaceship (spaceshipSquare, Game.planet);
+	  var rockSquare; var rock;
+	  for (var i=0 ; i<180 ; i++) {
+	    rockSquare = Game.planet.map[Math.round(Math.random() * 130)][Math.round(Math.random() * 130)];
+	    rock = new Rock (rockSquare, Game.planet.rocks);
+	  }
 	  spawnSquare.content = Game.player;
 	};
 	
@@ -238,26 +244,18 @@
 	
 	Player.prototype.checkIfStillWalking = function (x, y) {
 	  var walking = false;
-	  if (x == 1) {
-	    if (this.rightPressed) {
-	      this.walk(x, y);
-	      walking = true;
-	    }
-	  } else if (x == -1) {
-	    if (this.leftPressed) {
-	      this.walk(x, y);
-	      walking = true;
-	    }
-	  } else if (y == 1) {
-	    if (this.downPressed) {
-	      this.walk(x, y);
-	      walking = true;
-	    }
-	  } else if (y == -1) {
-	    if (this.topPressed) {
-	      this.walk(x, y);
-	      walking = true;
-	    }
+	  if (x == 1 && this.rightPressed) {
+	    this.walk(x, y);
+	    walking = true;
+	  } else if (x == -1 && this.leftPressed) {
+	    this.walk(x, y);
+	    walking = true;
+	  } else if (y == 1 && this.downPressed) {
+	    this.walk(x, y);
+	    walking = true;
+	  } else if (y == -1 && this.topPressed) {
+	    this.walk(x, y);
+	    walking = true;
 	  }
 	  return walking;
 	};
@@ -1431,6 +1429,28 @@
 	    b: Math.random() * 2.2,
 	  };
 	  this.sky = this.generateSky();
+	
+	  // Design rocks.
+	  this.rocks = {
+	    height: 12 + Math.random() * 5 - 2.5,
+	    uniformity: 1.3 + Math.random() * 0.5 - 0.25,
+	    outlineHues: {
+	      r: this.dirtHues.r + Math.random() * 30 - 90,
+	      g: this.dirtHues.g + Math.random() * 30 - 90,
+	      b: this.dirtHues.b + Math.random() * 30 - 90,
+	    },
+	    mainHues: {
+	      r: this.dirtHues.r + Math.random() * 80 - 40,
+	      g: this.dirtHues.g + Math.random() * 80 - 40,
+	      b: this.dirtHues.b + Math.random() * 80 - 40,
+	    },
+	    secondHues: {
+	      r: this.dirtHues.r + Math.random() * 50 - 25,
+	      g: this.dirtHues.g + Math.random() * 50 - 25,
+	      b: this.dirtHues.b + Math.random() * 50 - 25,
+	    },
+	  };
+	
 	};
 	
 	var hex = Utils.hex;
@@ -1651,6 +1671,73 @@
 	};
 	
 	module.exports = Viewport;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Sprite = __webpack_require__(3);
+	var Utils = __webpack_require__(13);
+	
+	var hex = Utils.hex;
+	
+	var Rock = function (square, masterRock) {
+	  this.square = square;
+	  square.content = this;
+	  this.height = Math.floor(Math.random() * 2) ?
+	    Math.round(masterRock.height / masterRock.uniformity):
+	    Math.round(masterRock.height * masterRock.uniformity);
+	  this.outlineColor = hex(
+	    masterRock.outlineHues.r,
+	    masterRock.outlineHues.g,
+	    masterRock.outlineHues.b
+	  );
+	  this.mainColor = hex(
+	    masterRock.mainHues.r,
+	    masterRock.mainHues.g,
+	    masterRock.mainHues.b
+	  );
+	  this.secondColor = hex(
+	    masterRock.secondHues.r,
+	    masterRock.secondHues.g,
+	    masterRock.secondHues.b
+	  );
+	  this.sprite = this.generateSprite(masterRock);
+	};
+	
+	Rock.prototype.generateSprite = function (masterRock) {
+	  var image = []; var brush; var x; var y;
+	  for (y=0 ; y<this.height ; y++) {
+	    image.push([]);
+	    for (x=0 ; x<20 ; x++) {
+	      image[y].push("");
+	    }
+	  }
+	  var leftBound = 1; var rightBound = 19;
+	  for (y=this.height-1 ; y>=0 ; y--) {
+	    image[y][leftBound] = this.outlineColor;
+	    brush = leftBound + 1;
+	    while (brush !== rightBound) {
+	      if (Math.floor(Math.random() * 6)) {
+	        image[y][brush] = this.mainColor;
+	      } else {
+	        image[y][brush] = this.secondColor;
+	      }
+	      brush += 1;
+	    }
+	    image[y][brush] = this.outlineColor;
+	    leftBound += Math.round(Math.random() * 3 - 1.5);
+	    rightBound += Math.round(Math.random() * 3 - 1.5);
+	    if (leftBound < 0) { leftBound = 1; }
+	    if (rightBound > 20) { rightBound = 19; }
+	    if (leftBound > rightBound) { leftBound = rightBound - 1; }
+	    if (rightBound < leftBound) { rightBound = leftBound + 1; }
+	  }
+	  return new Sprite ([image]);
+	};
+	
+	module.exports = Rock;
 
 
 /***/ }

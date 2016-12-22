@@ -32,6 +32,28 @@ Planet.prototype.generate = function () {
     b: Math.random() * 2.2,
   };
   this.sky = this.generateSky();
+
+  // Design rocks.
+  this.rocks = {
+    height: 12 + Math.random() * 5 - 2.5,
+    uniformity: 1.3 + Math.random() * 0.5 - 0.25,
+    outlineHues: {
+      r: this.dirtHues.r + Math.random() * 30 - 90,
+      g: this.dirtHues.g + Math.random() * 30 - 90,
+      b: this.dirtHues.b + Math.random() * 30 - 90,
+    },
+    mainHues: {
+      r: this.dirtHues.r + Math.random() * 80 - 40,
+      g: this.dirtHues.g + Math.random() * 80 - 40,
+      b: this.dirtHues.b + Math.random() * 80 - 40,
+    },
+    secondHues: {
+      r: this.dirtHues.r + Math.random() * 50 - 25,
+      g: this.dirtHues.g + Math.random() * 50 - 25,
+      b: this.dirtHues.b + Math.random() * 50 - 25,
+    },
+  };
+
 };
 
 var hex = Utils.hex;

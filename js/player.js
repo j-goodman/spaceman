@@ -139,26 +139,18 @@ Player.prototype.checkIfMovingOutsideViewport = function (x, y) {
 
 Player.prototype.checkIfStillWalking = function (x, y) {
   var walking = false;
-  if (x == 1) {
-    if (this.rightPressed) {
-      this.walk(x, y);
-      walking = true;
-    }
-  } else if (x == -1) {
-    if (this.leftPressed) {
-      this.walk(x, y);
-      walking = true;
-    }
-  } else if (y == 1) {
-    if (this.downPressed) {
-      this.walk(x, y);
-      walking = true;
-    }
-  } else if (y == -1) {
-    if (this.topPressed) {
-      this.walk(x, y);
-      walking = true;
-    }
+  if (x == 1 && this.rightPressed) {
+    this.walk(x, y);
+    walking = true;
+  } else if (x == -1 && this.leftPressed) {
+    this.walk(x, y);
+    walking = true;
+  } else if (y == 1 && this.downPressed) {
+    this.walk(x, y);
+    walking = true;
+  } else if (y == -1 && this.topPressed) {
+    this.walk(x, y);
+    walking = true;
   }
   return walking;
 };

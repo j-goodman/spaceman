@@ -3,6 +3,7 @@ console.log("Enter, spaceman.");
 // 1. REQUIRE DEPENDENCIES //
 var Player = require('./player.js');
 var Spaceship = require('./spaceship.js');
+var Rock = require('./rock.js');
 var Planet = require('./planet.js');
 var Square = require('./square.js');
 var Viewport = require('./viewport.js');
@@ -24,6 +25,11 @@ var setupWorld = function () {
   Game.viewport = new Viewport (Game, Game.planet, 0, 0);
   var spaceshipSquare = Game.planet.map[5][6];
   var spaceship = new Spaceship (spaceshipSquare, Game.planet);
+  var rockSquare; var rock;
+  for (var i=0 ; i<180 ; i++) {
+    rockSquare = Game.planet.map[Math.round(Math.random() * 130)][Math.round(Math.random() * 130)];
+    rock = new Rock (rockSquare, Game.planet.rocks);
+  }
   spawnSquare.content = Game.player;
 };
 
