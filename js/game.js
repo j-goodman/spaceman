@@ -26,7 +26,7 @@ var setupWorld = function () {
   var spaceshipSquare = Game.planet.map[5][6];
   var spaceship = new Spaceship (spaceshipSquare, Game.planet);
   var rockSquare; var rock;
-  for (var i=0 ; i<180 ; i++) {
+  for (var i=0 ; i<240 ; i++) {
     rockSquare = Game.planet.map[Math.round(Math.random() * 130)][Math.round(Math.random() * 130)];
     rock = new Rock (rockSquare, Game.planet.rocks);
   }
