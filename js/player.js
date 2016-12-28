@@ -148,7 +148,7 @@ Player.prototype.checkIfStillWalking = function (x, y) {
   } else if (y == 1 && this.downPressed) {
     this.walk(x, y);
     walking = true;
-  } else if (y == -1 && this.topPressed) {
+  } else if (y == -1 && this.upPressed) {
     this.walk(x, y);
     walking = true;
   }
