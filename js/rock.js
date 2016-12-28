@@ -16,15 +16,17 @@ var Rock = function (square, masterRock) {
     masterRock.outlineHues.g,
     masterRock.outlineHues.b
   );
+  var lightenA = Math.random() * 60 - 30;
+  var lightenB = Math.random() * 60 - 30;
   this.mainColor = hex(
-    masterRock.mainHues.r + Math.random() * 60 - 30,
-    masterRock.mainHues.g + Math.random() * 60 - 30,
-    masterRock.mainHues.b + Math.random() * 60 - 30
+    masterRock.mainHues.r + lightenA,
+    masterRock.mainHues.g + lightenA,
+    masterRock.mainHues.b + lightenA
   );
   this.secondColor = hex(
-    masterRock.secondHues.r + Math.random() * 60 - 30,
-    masterRock.secondHues.g + Math.random() * 60 - 30,
-    masterRock.secondHues.b + Math.random() * 60 - 30
+    masterRock.secondHues.r + lightenB,
+    masterRock.secondHues.g + lightenB,
+    masterRock.secondHues.b + lightenB
   );
   // this.sprite = this.generateSprite(masterRock);
   this.sprite = sprite;

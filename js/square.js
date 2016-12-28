@@ -23,10 +23,13 @@ Square.prototype.renderContent = function (ctx, screenPos) {
   if (!this.content.offset) {
     this.content.offset = {x: 0, y: 0};
   }
+  if (!this.content.yCenter) {
+    this.content.yCenter = 0;
+  }
   if (this.content.sprite) {
     this.content.sprite.draw(this, {
       x: (screenPos.x) * 60 + (60 - this.content.sprite.width * 3 + this.content.offset.x) / 2,
-      y: (screenPos.y) * 28 + 142 + 15 + this.content.offset.y
+      y: (screenPos.y) * 28 + 142 + 30 - this.content.yCenter + this.content.offset.y
     }, ctx);
   }
 };

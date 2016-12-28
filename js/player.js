@@ -19,6 +19,7 @@ var Player = function (GameObject, square) {
   this.rightPressed = false;
   this.downPressed = false;
   this.walking = false;
+  this.yCenter = 15;
   this.offset = {
     x: 0,
     y: 0,

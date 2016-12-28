@@ -124,6 +124,7 @@
 	  this.rightPressed = false;
 	  this.downPressed = false;
 	  this.walking = false;
+	  this.yCenter = 15;
 	  this.offset = {
 	    x: 0,
 	    y: 0,
@@ -1413,15 +1414,17 @@
 	    masterRock.outlineHues.g,
 	    masterRock.outlineHues.b
 	  );
+	  var lightenA = Math.random() * 60 - 30;
+	  var lightenB = Math.random() * 60 - 30;
 	  this.mainColor = hex(
-	    masterRock.mainHues.r + Math.random() * 60 - 30,
-	    masterRock.mainHues.g + Math.random() * 60 - 30,
-	    masterRock.mainHues.b + Math.random() * 60 - 30
+	    masterRock.mainHues.r + lightenA,
+	    masterRock.mainHues.g + lightenA,
+	    masterRock.mainHues.b + lightenA
 	  );
 	  this.secondColor = hex(
-	    masterRock.secondHues.r + Math.random() * 60 - 30,
-	    masterRock.secondHues.g + Math.random() * 60 - 30,
-	    masterRock.secondHues.b + Math.random() * 60 - 30
+	    masterRock.secondHues.r + lightenB,
+	    masterRock.secondHues.g + lightenB,
+	    masterRock.secondHues.b + lightenB
 	  );
 	  // this.sprite = this.generateSprite(masterRock);
 	  this.sprite = sprite;
@@ -1629,10 +1632,13 @@
 	  if (!this.content.offset) {
 	    this.content.offset = {x: 0, y: 0};
 	  }
+	  if (!this.content.yCenter) {
+	    this.content.yCenter = 0;
+	  }
 	  if (this.content.sprite) {
 	    this.content.sprite.draw(this, {
 	      x: (screenPos.x) * 60 + (60 - this.content.sprite.width * 3 + this.content.offset.x) / 2,
-	      y: (screenPos.y) * 28 + 142 + 15 + this.content.offset.y
+	      y: (screenPos.y) * 28 + 142 + 30 - this.content.yCenter + this.content.offset.y
 	    }, ctx);
 	  }
 	};
