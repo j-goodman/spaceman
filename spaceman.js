@@ -69,7 +69,7 @@
 	  var spawnSquare = Game.planet.map[10][10];
 	  Game.player = new Player (Game, spawnSquare);
 	  Game.viewport = new Viewport (Game, Game.planet, 0, 0);
-	  var spaceshipSquare = Game.planet.map[5][6];
+	  var spaceshipSquare = Game.planet.map[10][6];
 	  var spaceship = new Spaceship (spaceshipSquare, Game.planet);
 	  var rockSquare; var rock;
 	  for (var i=0 ; i<240 ; i++) {
@@ -1426,7 +1426,9 @@
 	    masterRock.secondHues.g + lightenB,
 	    masterRock.secondHues.b + lightenB
 	  );
+	  this.speckledness = masterRock.speckledness;
 	  this.sprite = this.generateSprite(masterRock);
+	  this.yCenter = 5;
 	  sprite.colorA = this.outlineColor;
 	  sprite.colorB = this.mainColor;
 	  sprite.colorC = this.secondColor;
@@ -1457,7 +1459,7 @@
 	      }
 	      while (brush < rightBound) {
 	        image[y][brush] = this.mainColor;
-	        if (!Math.floor(Math.random() * 16)) {
+	        if (!Math.floor(Math.random() * 32 - 32 * this.speckledness)) {
 	          image[y][brush] = this.secondColor;
 	        }
 	        if (y === 0 || y === this.height - 1) {
@@ -1571,6 +1573,7 @@
 	  this.rocks = {
 	    height: 20 + Math.random() * 5 - 2.5,
 	    uniformity: 1.3 + Math.random() * 0.5 - 0.25,
+	    speckledness: Math.random(),
 	    outlineHues: {
 	      r: this.dirtHues.r - 70,
 	      g: this.dirtHues.g - 70,

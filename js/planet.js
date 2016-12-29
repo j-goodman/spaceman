@@ -37,6 +37,7 @@ Planet.prototype.generate = function () {
   this.rocks = {
     height: 20 + Math.random() * 5 - 2.5,
     uniformity: 1.3 + Math.random() * 0.5 - 0.25,
+    speckledness: Math.random(),
     outlineHues: {
       r: this.dirtHues.r - 70,
       g: this.dirtHues.g - 70,
