@@ -16,6 +16,7 @@ var Rock = function (square, masterRock) {
     masterRock.outlineHues.g,
     masterRock.outlineHues.b
   );
+  this.checko = masterRock.outlineHues;
   var lightenA = Math.random() * 60 - 30;
   var lightenB = Math.random() * 60 - 30;
   this.mainColor = hex(
