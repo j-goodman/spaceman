@@ -66,10 +66,16 @@
 	// 3. SETUP GAME WORLD //
 	var setupWorld = function () {
 	  Game.planet = new Planet ();
-	  var spawnSquare = Game.planet.map[10][10];
-	  Game.player = new Player (Game, spawnSquare);
 	  Game.viewport = new Viewport (Game, Game.planet, 0, 0);
-	  var spaceshipSquare = Game.planet.map[10][6];
+	  var spawnSquare = {content: true};
+	  while (spawnSquare.content) {
+	    spawnSquare = Game.planet.map[Math.floor(Math.random() * 11)][Math.floor(Math.random() * 11)];
+	  }
+	  Game.player = new Player (Game, spawnSquare);
+	  var spaceshipSquare = {content: true};
+	  while (spaceshipSquare.content) {
+	    spaceshipSquare = Game.planet.map[Math.floor(Math.random() * 7 + 2)][Math.floor(Math.random() * 7 + 2)];
+	  }
 	  var spaceship = new Spaceship (spaceshipSquare, Game.planet);
 	  var rockSquare; var rock;
 	  for (var i=0 ; i<240 ; i++) {
