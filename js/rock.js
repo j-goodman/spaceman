@@ -28,12 +28,14 @@ var Rock = function (square, masterRock) {
     masterRock.secondHues.g + lightenB,
     masterRock.secondHues.b + lightenB
   );
+  this.middleColor = hex(
+    (masterRock.mainHues.r + masterRock.secondHues.r) / 2,
+    (masterRock.mainHues.g + masterRock.secondHues.g) / 2,
+    (masterRock.mainHues.b + masterRock.secondHues.b) / 2
+  );
   this.speckledness = masterRock.speckledness;
   this.sprite = this.generateSprite(masterRock);
   this.yCenter = 5;
-  sprite.colorA = this.outlineColor;
-  sprite.colorB = this.mainColor;
-  sprite.colorC = this.secondColor;
 };
 
 Rock.prototype.generateSprite = function () {
@@ -61,8 +63,13 @@ Rock.prototype.generateSprite = function () {
       }
       while (brush < rightBound) {
         image[y][brush] = this.mainColor;
-        if (!Math.floor(Math.random() * 32 - 32 * this.speckledness)) {
+        if (!Math.floor(Math.random() * 12 - 12 * this.speckledness)) {
           image[y][brush] = this.secondColor;
+          var plusX = Math.round(Math.random() * 2 - 1);
+          var plusY = Math.round(Math.random() * 2 - 1);
+          if (image[y + plusY] && image[y + plusY][brush + plusX]) {
+            image[y + plusY][brush + plusX] = this.middleColor;
+          }
         }
         if (y === 0 || y === this.height - 1) {
           image[y][brush] = this.outlineColor;

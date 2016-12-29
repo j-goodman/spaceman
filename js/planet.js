@@ -54,7 +54,6 @@ Planet.prototype.generate = function () {
       b: this.dirtHues.b - 30,
     },
   };
-
 };
 
 var hex = Utils.hex;

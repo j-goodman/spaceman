@@ -28,7 +28,9 @@ var setupWorld = function () {
   var rockSquare; var rock;
   for (var i=0 ; i<240 ; i++) {
     rockSquare = Game.planet.map[Math.round(Math.random() * 130)][Math.round(Math.random() * 130)];
-    rock = new Rock (rockSquare, Game.planet.rocks);
+    if (!rockSquare.content) {
+      rock = new Rock (rockSquare, Game.planet.rocks);
+    }
   }
   spawnSquare.content = Game.player;
 };
